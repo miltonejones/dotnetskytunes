@@ -321,9 +321,8 @@
                 caption: "Add this song to a playlist",
                 icon: "➕",
                 action: () => {
-                    hideMenu()
-                     showPlaylist(track);
-
+                    hideMenu();
+                    showPlaylistEditor(track); 
                 },
             },
         ];
@@ -354,7 +353,7 @@
             }
         }
         
-        function showPlaylist(track) {
+        function showPlaylistEditor(track) {
             editedTrack = track
             document.getElementById('playlistEditDrawer').classList.add('show');
 
