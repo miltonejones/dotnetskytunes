@@ -1,0 +1,20 @@
+## .NET ##
+**/bin/
+**/obj/
+*.dll
+*.pdb
+*.exe
+*.cache
+*.log
+*.json
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+*/build/output/
+
+# User-specific files
+*.userprefs
+
+# NuGet packages
+*.nupkg

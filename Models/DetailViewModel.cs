@@ -7,6 +7,7 @@ namespace SkyTunesCsharp.Models
         public string? Title { get; set; }
         public string? Subtitle { get; set; }
         public string? ImageUrl { get; set; }
+        public string? ListKey { get; set; }
         public List<TrackDto> Tracks { get; set; } = new List<TrackDto>();
         public int TrackCount => Tracks.Count;
         public int CurrentPage { get; set; } = 1;

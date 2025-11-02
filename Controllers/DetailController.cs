@@ -123,6 +123,7 @@ namespace SkyTunesCsharp.Controllers
                             viewModel.ImageUrl = playlist.Image;
                             viewModel.Subtitle = $"{playlist.Related.Count} tracks";
                             viewModel.Tracks = ConvertToTrackDtos(playlistDetail.Related?.Records, favoriteFileKeys);
+                            viewModel.ListKey = playlist.ListKey;
                         }
                         break;
 
