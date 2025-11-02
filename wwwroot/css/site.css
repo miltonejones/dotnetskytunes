@@ -236,3 +236,7 @@ body {
 .col-xl-5 {
   width: 20%;
 }
+
+.drag-over {
+  background-color: yellow;
+}

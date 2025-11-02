@@ -30,15 +30,19 @@ const updateList = async (playlist) => {
   };
 
   await savePlaylist(updated);
-  console.log({ editedTrack, related });
-  const messageBox = document.getElementById("toast-message");
-  messageBox.innerHTML = `"${editedTrack.title}" ${verb} "${playlist.Title}"`;
+
+  showToast(`"${editedTrack.title}" ${verb} "${playlist.Title}"`);
+
   updatePlaylistIcons();
   hidePlaylist();
+};
 
+function showToast(message) {
+  const messageBox = document.getElementById("toast-message");
+  messageBox.innerHTML = message;
   const toast = new bootstrap.Toast(document.getElementById("liveToast"));
   toast.show();
-};
+}
 
 let currentPlayLists = [];
 let relatedTracks = [];
@@ -102,3 +106,66 @@ function updatePlaylistIcons() {
 }
 
 document.addEventListener("DOMContentLoaded", updatePlaylistIcons);
+
+let draggedItem = null;
+let dragOverIndex = null;
+
+const setDraggedItem = (e) => (draggedItem = e);
+const setDragOverIndex = (e) => (dragOverIndex = e);
+
+const handleDragStart = (e, song, index) => {
+  setDraggedItem({ song, index });
+  e.dataTransfer.setData("text/plain", song.ID);
+  e.dataTransfer.effectAllowed = "move";
+};
+
+const handleDragOver = (e, index) => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
+  e.target.classList.add("drag-over");
+  setDragOverIndex(index);
+};
+
+const handleDragLeave = (e) => {
+  setDragOverIndex(null);
+  e.target.classList.remove("drag-over");
+};
+
+const handleDrop = (e, dropIndex, listKey) => {
+  e.preventDefault();
+
+  console.log({ draggedItem });
+
+  if (draggedItem && draggedItem.index !== dropIndex) {
+    getPlaylistGrid().then((data) => {
+      const list = data.records.find((f) => f.listKey === listKey);
+
+      if (list) {
+        console.log({ draggedItem2: draggedItem });
+
+        const newRecords = [...list.related];
+        const [movedItem] = newRecords.splice(draggedItem.index, 1);
+        newRecords.splice(dropIndex, 0, movedItem);
+
+        const updated = {
+          ...list,
+          items: null,
+          track: null,
+          related: newRecords,
+        };
+
+        console.log({ updated });
+
+        savePlaylist(updated).then(() => {
+          showToast(`"${updated.Title}" track order changed!`);
+          setTimeout(() => {
+            location.reload();
+          }, 2999);
+        });
+      }
+
+      setDraggedItem(null);
+      setDragOverIndex(null);
+    });
+  }
+};

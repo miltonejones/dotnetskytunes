@@ -103,8 +103,18 @@
                     {
                         var track = Model.Tracks[i];
                         string  heart = track.Favorite == true ? "solid" : "regular";
+                        // @Html.Raw(Json.Serialize(track))
+                        string draggable = Model.ListKey.Length > 0 ? "true" : "false";
 
-                        <div class="track-item d-flex align-items-center p-3 border-bottom">
+                        <div class="track-item d-flex align-items-center p-3 border-top"
+                            draggable="@draggable"
+                            ondragstart='handleDragStart(event, @Html.Raw(Json.Serialize(track)), @i)'
+                            ondragover="handleDragOver(event, @i)"
+                            ondragleave="handleDragLeave(event)"
+                            ondrop="handleDrop(event, @i, '@Model.ListKey')" 
+                        >
+                        
+                        
                             <div class="track-number me-3" style="width: 30px;">
                                 <span class="text-muted">@(i + 1)</span>
                             </div>
