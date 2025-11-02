@@ -181,13 +181,13 @@
 <div id="playlistEditDrawer" class="playlist-drawer left">
     <div class="drawer-header">
         <h5>Add to Playlist</h5>
-        <button type="button" class="btn-close" onclick="hidePlaylist()"></button>
+        <button type="button" class="btn-close" onclick="hidePlaylistEditor()"></button>
     </div>
     <div class="drawer-body">
         <div id="drawer-title">
              
         </div>
-        <ul class="list-group" id="playlistItems">
+        <ul class="list-group" >
            @foreach (var item in Model.PlayListItems) 
            { 
                 <li class="list-group-item d-flex justify-content-between">@item.Title
@@ -230,20 +230,7 @@
 
         let editedTrack = {}; 
         const pageListKey = "@Model.ListKey";
-@* 
-        function addToQueue(track) { 
-            const state = window.audioState; 
-            const newSongList = [...state.trackList];
-            newSongList.splice(state.currentTrackIndex + 1, 0, track); 
-            window.audioState = {
-                ...state,
-                trackList: newSongList
-            };
-            updatePlaylistUI() ;
-            hideMenu();
-            showToast(`${track.title} added to queue`)
-        } *@
-
+        
         function addToQueue(track) { 
             // Add queued property to the track
             const queuedTrack = {
@@ -365,7 +352,7 @@
 
         }
 
-        function hidePlaylist() {
+        function hidePlaylistEditor() {
             editedTrack = {}
             document.getElementById('playlistEditDrawer').classList.remove('show');
         }

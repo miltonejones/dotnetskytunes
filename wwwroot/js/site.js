@@ -84,19 +84,21 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".fallback").forEach((item) => {
     var src = item.src;
     var fallback = item.getAttribute("data-fallback");
-    console.log({ src, fallback });
+    // console.log({ src, fallback });
     doFallback(item, src, fallback);
   });
 });
 
 function updatePlaylistUI() {
   const playlistContainer = document.getElementById("playlistItems");
-  if (!playlistContainer) return;
+  if (!playlistContainer) return alert("Cannot find container for playlist");
 
   const state = window.audioState;
 
+  console.log({ state });
+
   if (playlistContainer && state.trackList.length > 0) {
-    playlistContainer.innerHTML = state.trackList
+    var innerHTML = state.trackList
       .map(
         (track, index) => `
           <li class="list-group-item track-item ${
@@ -105,9 +107,13 @@ function updatePlaylistUI() {
               onclick="window.playGlobalTrack(window.audioState.trackList[${index}], window.audioState.trackList, ${index})"
               style="cursor: pointer;">
               ${track.title} - ${track.artistName}
-          </li>
+          </li>\n
       `
       )
       .join("");
+
+    console.log({ innerHTML });
+    // alert(innerHTML);
+    playlistContainer.innerHTML = innerHTML;
   }
 }
