@@ -1,0 +1,32 @@
+name: Deploy to AWS App Runner
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t 123823813021.dkr.ecr.us-east-1.amazonaws.com/skytunescsharp:latest .
+        docker push 123823813021.dkr.ecr.us-east-1.amazonaws.com/skytunescsharp:latest
+
+    - name: Trigger App Runner deployment
+      run: |
+        SERVICE_ARN=$(aws apprunner list-services --query "ServiceSummaryList[?ServiceName=='skytunes-app'].ServiceArn" --output text)
+        aws apprunner start-deployment --service-arn $SERVICE_ARN
+        echo "🚀 Deployment triggered! App Runner will now update with the new image."
