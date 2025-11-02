@@ -44,3 +44,4 @@
 /home/miltonejones/Projects/SkyTunesCsharp/bin/Debug/net8.0/apprunner-config.json
 /home/miltonejones/Projects/SkyTunesCsharp/bin/Debug/net8.0/apprunner-final.json
 /home/miltonejones/Projects/SkyTunesCsharp/bin/Debug/net8.0/apprunner-healthcheck.json
+/home/miltonejones/Projects/SkyTunesCsharp/obj/Debug/net8.0/SkyTunesCsharp.sourcelink.json

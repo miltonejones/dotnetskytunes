@@ -21,6 +21,10 @@
       "PackagePath": "staticwebassets/favicon.ico"
     },
     {
+      "Id": "/home/miltonejones/Projects/SkyTunesCsharp/wwwroot/js/playlist.js",
+      "PackagePath": "staticwebassets/js/playlist.js"
+    },
+    {
       "Id": "/home/miltonejones/Projects/SkyTunesCsharp/wwwroot/js/site.js",
       "PackagePath": "staticwebassets/js/site.js"
     },

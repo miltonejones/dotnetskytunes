@@ -138,7 +138,7 @@
                                 @track.TrackTime
                             </div>
                             <div class="track-actions ms-3" onclick='showMenu(@Html.Raw(Json.Serialize(track)))'> 
-                                <i class="fa-@heart fa-heart"></i>
+                                <i class="relatable fa-heart" data-file-key="@track.FileKey"></i>
                             </div>
                         </div>
                     }
@@ -167,7 +167,7 @@
            @foreach (var item in Model.PlayListItems) 
            { 
                 <li class="list-group-item d-flex justify-content-between">@item.Title
-                   <i class="related fa-heart" data-related-keys="@string.Join(',', item.Related)"></i>
+                   <i class="related fa-heart" onclick="saveToPlaylist('@item.ListKey')" data-title="@item.Title" data-listkey="@item.ListKey"></i>
                 </li>
            }
         </ul>
@@ -189,7 +189,17 @@
     </div>
 </div>
 
-
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="liveToast" class="toast" role="alert">
+        <div class="toast-header">
+            <strong class="me-auto">Success!</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="toast-message">
+            Hello, world! This is a toast message.
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script>
@@ -287,25 +297,8 @@
             const playlistTitle = document.getElementById('drawer-title');
             playlistTitle.innerHTML = track.title;
  
+            updateDrawerIcons();
 
-
-            document.querySelectorAll('.related').forEach(item => { 
-                item.style.cursor = 'pointer';
-                item.classList.remove ("fa-solid")
-                item.classList.remove ("fa-regular")
-                const keys =  item.getAttribute('data-related-keys'); 
-                const ok = keys.indexOf(track.fileKey) > -1
-                  ? "fa-solid"
-                  : "fa-regular";
-
-                item.classList.add(ok);
-                
-                item.addEventListener('click', function(e) {
-                    @* if (!e.target.closest('.track-actions')) {
-                        playTrack(trackId);
-                    } *@
-                });
-            });
 
         }
 
