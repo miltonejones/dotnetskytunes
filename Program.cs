@@ -6,7 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add health checks service FIRST
 builder.Services.AddHealthChecks();
 
-// builder.WebHost.UseUrls("http://*:80");
+if (builder.Environment.IsProduction())
+{
+    builder.WebHost.UseUrls("http://*:80");
+}
 
 // Add services to the container.
 builder.Services.AddControllersWithViews()
