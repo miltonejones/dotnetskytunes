@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SkyTunesCsharp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+31114f6c1652a20c049f7c2737f7dd1f9b77505a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e2daf6ce2a6931d426a4922efb3a2059facbead6")]
 [assembly: System.Reflection.AssemblyProductAttribute("SkyTunesCsharp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SkyTunesCsharp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

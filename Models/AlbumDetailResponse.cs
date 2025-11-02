@@ -16,8 +16,16 @@ namespace SkyTunesCsharp.Models
         [JsonPropertyName("artistFk")]
         public string ArtistFk { get; set; } = string.Empty;
 
-        [JsonPropertyName("collectionId")]
-        public int CollectionId { get; set; }
+        // [JsonPropertyName("collectionId")]
+        // public int CollectionId { get; set; } = 0;
+
+         [JsonPropertyName("collectionId")]
+        public string CollectionId { get; set; }
+        
+        // If you need it as int elsewhere, add a computed property
+        [JsonIgnore]
+        public int CollectionIdInt => int.TryParse(CollectionId, out int result) ? result : 0;
+
 
         [JsonPropertyName("artistName")]
         public string ArtistName { get; set; } = string.Empty;

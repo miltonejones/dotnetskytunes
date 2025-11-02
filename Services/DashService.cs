@@ -34,7 +34,7 @@ namespace SkyTunesCsharp.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Dash response: {content}");
+                // _logger.LogInformation($"Dash response: {content}");
 
                 var dashItems = JsonSerializer.Deserialize<List<DashResponse>>(content, _jsonOptions);
 
@@ -55,7 +55,7 @@ namespace SkyTunesCsharp.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Album detail response: {content}");
+                // _logger.LogInformation($"Album detail response: {content}");
 
                 var albumDetail = JsonSerializer.Deserialize<AlbumDetailResponse>(content, _jsonOptions);
 
@@ -76,7 +76,7 @@ namespace SkyTunesCsharp.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Artist detail response: {content}");
+                // _logger.LogInformation($"Artist detail response: {content}");
 
                 var artistDetail = JsonSerializer.Deserialize<ArtistDetailResponse>(content, _jsonOptions);
 
@@ -97,7 +97,7 @@ namespace SkyTunesCsharp.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Playlist detail response: {content}");
+                // _logger.LogInformation($"Playlist detail response: {content}");
 
                 var playlistDetail = JsonSerializer.Deserialize<PlaylistDetailResponse>(content, _jsonOptions);
 
@@ -118,7 +118,7 @@ namespace SkyTunesCsharp.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Playlist grid response: {content}");
+                // _logger.LogInformation($"Playlist grid response: {content}");
 
                 var playlistDetail = JsonSerializer.Deserialize<PlaylistDashResponse>(content, _jsonOptions);
 
@@ -140,7 +140,7 @@ namespace SkyTunesCsharp.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Genre detail response: {content}");
+                // _logger.LogInformation($"Genre detail response: {content}");
 
                 var genreDetail = JsonSerializer.Deserialize<GenreDetailResponse>(content, _jsonOptions);
 
@@ -162,7 +162,7 @@ namespace SkyTunesCsharp.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Artist grid response: {content}");
+                // _logger.LogInformation($"Artist grid response: {content}");
 
                 var artistGrid = JsonSerializer.Deserialize<ArtistGridResponse>(content, _jsonOptions);
 
@@ -183,7 +183,7 @@ namespace SkyTunesCsharp.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Album grid response: {content}");
+                // _logger.LogInformation($"Album grid response: {content}");
 
                 var albumGrid = JsonSerializer.Deserialize<AlbumGridResponse>(content, _jsonOptions);
 
@@ -204,7 +204,7 @@ namespace SkyTunesCsharp.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Genre grid response: {content}");
+                // _logger.LogInformation($"Genre grid response: {content}");
 
                 var genreGrid = JsonSerializer.Deserialize<GenreGridResponse>(content, _jsonOptions);
 
@@ -225,7 +225,7 @@ namespace SkyTunesCsharp.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Playlist grid response: {content}");
+                // _logger.LogInformation($"Playlist grid response: {content}");
 
                 var playlistGrid = JsonSerializer.Deserialize<PlaylistGridResponse>(content, _jsonOptions);
 
@@ -246,7 +246,7 @@ namespace SkyTunesCsharp.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Playlist grid response: {content}");
+                // _logger.LogInformation($"Playlist grid response: {content}");
 
                 var playlistGrid = JsonSerializer.Deserialize<MusicResponse>(content, _jsonOptions);
 
@@ -268,7 +268,7 @@ namespace SkyTunesCsharp.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"{searchType} grid response: {content}");
+                // _logger.LogInformation($"{searchType} grid response: {content}");
 
                 var gridResponse = JsonSerializer.Deserialize<T>(content, _jsonOptions);
 
@@ -297,7 +297,7 @@ namespace SkyTunesCsharp.Services
                     }
                 }
 
-                _logger.LogInformation($"All related strings: {JsonSerializer.Serialize(allRelated)}");
+                // _logger.LogInformation($"All related strings: {JsonSerializer.Serialize(allRelated)}");
                 return allRelated;
             }
             catch (Exception ex)

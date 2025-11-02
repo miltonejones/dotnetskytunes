@@ -28,10 +28,7 @@ public class HomeController : Controller
         _logger = logger;
         
         // Safe way to get the configuration value
-        _longString = configuration.GetValue<string>("AppStrings:Fallback") ?? string.Empty;
-        
-        // Log to verify it's working
-        _logger.LogInformation($"Fallback string length: {_longString?.Length ?? 0}");
+        _longString = configuration.GetValue<string>("AppStrings:Fallback") ?? string.Empty; 
     }
 
 
@@ -42,8 +39,7 @@ public class HomeController : Controller
         {
             // _logger.LogInformation("HomeController Index method called");
             
-            var dashItems = await _dashService.GetDashResponse();
-            _logger.LogInformation($"Retrieved {dashItems?.Count ?? 0} items from service");
+            var dashItems = await _dashService.GetDashResponse(); 
 
             var carouselItems = dashItems?
                 .Where(item => item.Type?.ToLower() == "artist" && item.ImageLg?.Length > 0)
