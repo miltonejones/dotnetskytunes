@@ -30,3 +30,63 @@ jobs:
           SERVICE_ARN=$(aws apprunner list-services --query "ServiceSummaryList[?ServiceName=='skytunescsharp'].ServiceArn" --output text)
           aws apprunner start-deployment --service-arn $SERVICE_ARN
           echo "🚀 Deployment triggered! App Runner will now update with the new image."
+
+      - name: Send deployment success email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "✅ Deployment Successful - SkyTunes CSharp"
+          body: |
+            Hello Milton,
+
+            Your deployment to AWS App Runner has completed successfully! 🎉
+
+            **Details:**
+            - Repository: ${{ github.repository }}
+            - Commit: ${{ github.sha }}
+            - Branch: ${{ github.ref }}
+            - Triggered by: ${{ github.actor }}
+            - Timestamp: ${{ github.event.head_commit.timestamp }}
+
+            The new Docker image has been built, pushed to ECR, and App Runner deployment has been triggered.
+
+            You can check your service status in the AWS App Runner console.
+
+            Best regards,
+            GitHub Actions 🤖
+          to: miltonejones@gmail.com
+          from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
+        if: success()
+
+      - name: Send deployment failure email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "❌ Deployment Failed - SkyTunes CSharp"
+          body: |
+            Hello Milton,
+
+            Your deployment to AWS App Runner has failed! ⚠️
+
+            **Details:**
+            - Repository: ${{ github.repository }}
+            - Commit: ${{ github.sha }}
+            - Branch: ${{ github.ref }}
+            - Triggered by: ${{ github.actor }}
+
+            Please check the GitHub Actions logs for details on what went wrong:
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            You may need to investigate the build process, AWS credentials, or App Runner configuration.
+
+            Best regards,
+            GitHub Actions 🤖
+          to: miltonejones@gmail.com
+          from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
+        if: failure()
