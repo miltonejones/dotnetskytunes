@@ -19,12 +19,12 @@ namespace SkyTunesCsharp.Models
         // [JsonPropertyName("collectionId")]
         // public int CollectionId { get; set; } = 0;
 
-         [JsonPropertyName("collectionId")]
-        public string CollectionId { get; set; }
+        //  [JsonPropertyName("collectionId")]
+        // public string CollectionId { get; set; }
         
-        // If you need it as int elsewhere, add a computed property
-        [JsonIgnore]
-        public int CollectionIdInt => int.TryParse(CollectionId, out int result) ? result : 0;
+        // // If you need it as int elsewhere, add a computed property
+        // [JsonIgnore]
+        // public int CollectionIdInt => int.TryParse(CollectionId, out int result) ? result : 0;
 
 
         [JsonPropertyName("artistName")]
