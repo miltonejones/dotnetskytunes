@@ -1,0 +1,40 @@
+@model SkyTunesCsharp.Models.PlaylistItem
+
+@{
+    var imageUrl = !string.IsNullOrEmpty(Model.Image) ? Model.Image : Url.Content("~/images/default-album.png");
+    var title = Model.Title ?? "Unknown Playlist";
+    var trackCount = Model.Related.Count;
+    var caption = $"{trackCount} tracks"; //!string.IsNullOrEmpty(Model.TrackCount) ? $"{Model.TrackCount} tracks" : "";
+    var subcaption = ""; // You can add additional subcaption logic if needed
+}
+
+<div class="playcard-outer" onclick="handlePlaylistClick('@Model.ListKey')">
+    <div class="playcard-icon">
+        <img src="@imageUrl" alt="@title"  />
+    </div>
+    <div class="playcard-label">
+        <div class="playcard-title">@title</div>
+        @if (!string.IsNullOrEmpty(caption))
+        {
+            <div class="playcard-caption">@caption</div>
+        }
+        @if (!string.IsNullOrEmpty(subcaption))
+        {
+            <div class="playcard-caption">@subcaption</div>
+        }
+    </div>
+</div>
+
+<script>
+    function handlePlaylistClick(playlistId) {
+        // Emit click event - you can customize this behavior
+        console.log('Playlist clicked:', playlistId);
+        
+        // Example: Navigate to playlist detail page
+        window.location.href = '@Url.Action("Index", "Detail")/playlist/' + playlistId;
+        
+        // Or dispatch a custom event for other components to listen to
+        // const event = new CustomEvent('playlistCardClick', { detail: { playlistId: playlistId } });
+        // window.dispatchEvent(event);
+    }
+</script>

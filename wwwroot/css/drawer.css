@@ -1,0 +1,23 @@
+.playlist-drawer {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 400px;
+  height: 100vh;
+  background: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+
+.playlist-drawer.show {
+  right: 0;
+}
+
+.playlist-drawer.left {
+  left: -400px;
+}
+
+.playlist-drawer.left.show {
+  left: 0;
+}

@@ -1,0 +1,19 @@
+{
+  "ServiceName": "skytunes-healthcheck",
+  "SourceConfiguration": {
+    "ImageRepository": {
+      "ImageIdentifier": "123823813021.dkr.ecr.us-east-1.amazonaws.com/skytunescsharp:healthcheck",
+      "ImageRepositoryType": "ECR",
+      "ImageConfiguration": {
+        "Port": "80",
+        "RuntimeEnvironmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Production"
+        }
+      }
+    }
+  },
+  "InstanceConfiguration": {
+    "Cpu": "1024",
+    "Memory": "2048"
+  }
+}

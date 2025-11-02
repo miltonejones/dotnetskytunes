@@ -1,0 +1,423 @@
+@model SkyTunesCsharp.Models.DetailViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+    var typeDisplay = Model.Type?.ToLower() switch
+    {
+        "artist" => "Artist",
+        "album" => "Album", 
+        "playlist" => "Playlist",
+        "genre" => "Genre",
+        "music" => "All Tracks",
+        _ => "Item"
+    };
+
+    var modelType = Model.Type?.ToLower() ;
+}
+
+<div class="mt-4">
+    <!-- Header Section -->
+   
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="detail-image-container">
+                <img src="@Model.ImageUrl" alt="@Model.Title" 
+                     class="img-fluid rounded shadow" 
+                     onerror="this.src='/images/placeholder.jpg'" />
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="detail-content">
+                <span class="badge bg-primary mb-2">@typeDisplay</span>
+                <h1 class="display-4">@Model.Title</h1>
+                <p class="lead">@Model.Subtitle</p>
+                
+                <div class="detail-actions mt-4">
+                    <button class="btn btn-primary btn-lg me-2" onclick="playAllTracks()">
+                        <i class="fas fa-play"></i> Play All
+                    </button> 
+                </div>
+
+                <!-- Pagination for Genre -->
+                @if (modelType == "genre")
+                {
+                    <div class="pagination mt-3">
+                        @if (Model.CurrentPage > 1)
+                        {
+                            <a href="@Url.Action("Index", new { type = modelType, id = Model.Title, page = Model.CurrentPage - 1 })" 
+                               class="btn btn-outline-primary btn-sm me-2">
+                                <i class="fas fa-chevron-left"></i> Previous
+                            </a>
+                        }
+                        
+                        <span class="text-muted me-2">Page @Model.CurrentPage</span>
+                        
+                        @* @if (Model.Tracks.Count == 50) 
+                        { *@
+                            <a href="@Url.Action("Index", new { type = modelType, id = Model.Title, page = Model.CurrentPage + 1 })" 
+                               class="btn btn-outline-primary btn-sm">
+                                Next <i class="fas fa-chevron-right"></i>
+                            </a>
+                        @* } *@
+                    </div>
+                }
+                @if (modelType == "music")
+                {
+                    <div class="pagination mt-3">
+                        @if (Model.CurrentPage > 1)
+                        {
+                            <a onclick="gotoPage('/Library/@(Model.CurrentPage - 1)')"
+                               class="btn btn-outline-primary btn-sm me-2">
+                                <i class="fas fa-chevron-left"></i> Previous
+                            </a>
+                        }
+                        
+                        <span class="text-muted me-2">Page @Model.CurrentPage</span>
+                        
+                        @* @if (Model.Tracks.Count == 50) 
+                        { *@
+                            <a onclick="gotoPage('/Library/@(Model.CurrentPage + 1)')"
+                               class="btn btn-outline-primary btn-sm">
+                                Next <i class="fas fa-chevron-right"></i>
+                            </a>
+                        @* } *@
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Tracks List Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="tracks-header d-flex justify-content-between align-items-center mb-3">
+                <h3>Tracks</h3>
+                <span class="text-muted">@Model.TrackCount tracks</span>
+            </div>
+
+            <!-- Tracks List -->
+            <div class="tracks-list">
+                @if (Model.Tracks.Any())
+                {
+                    for (int i = 0; i < Model.Tracks.Count; i++)
+                    {
+                        var track = Model.Tracks[i];
+                        string  heart = track.Favorite == true ? "solid" : "regular";
+
+                        <div class="track-item d-flex align-items-center p-3 border-bottom">
+                            <div class="track-number me-3" style="width: 30px;">
+                                <span class="text-muted">@(i + 1)</span>
+                            </div>
+                            <div class="track-info flex-grow-1">
+                               <div class="d-flex gap-1">
+                                <img src="@track.AlbumImage" alt="@track.Title" class="track-icon" />
+                                <div>
+                                <h6 class="mb-1 track-title" data-track-id="@track.Id">@track.Title</h6>
+                                <small class="text-muted">
+                                    @if (Model.Type == "artist")
+                                    {
+                                        <div class="track-album" data-track-id="@track.AlbumFk">@track.AlbumName</div>
+                                    }
+                                    else if (Model.Type == "album") 
+                                    {
+                                        <div class="track-artist" data-track-id="@track.ArtistFk">@track.ArtistName</div> 
+                                    }
+                                    else
+                                    {
+                                       <div class="d-flex gap-1">
+                                        <div class="track-artist" data-track-id="@track.ArtistFk">@track.ArtistName</div> 
+                                        <text> • </text>
+                                        <div class="track-album" data-track-id="@track.AlbumFk">@track.AlbumName</div>
+                                       </div>
+                                    }
+                                </small>
+                                </div>
+                               </div>
+                            </div>
+                            <div class="track-duration text-muted">
+                                @track.TrackTime
+                            </div>
+                            <div class="track-actions ms-3" onclick='showMenu(@Html.Raw(Json.Serialize(track)))'> 
+                                <i class="fa-@heart fa-heart"></i>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <p class="text-muted">No tracks found</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="playlistEditDrawer" class="playlist-drawer left">
+    <div class="drawer-header">
+        <h5>Add to Playlist</h5>
+        <button type="button" class="btn-close" onclick="hidePlaylist()"></button>
+    </div>
+    <div class="drawer-body">
+        <div id="drawer-title">
+             
+        </div>
+        <ul class="list-group" id="playlistItems">
+           @foreach (var item in Model.PlayListItems) 
+           { 
+                <li class="list-group-item d-flex justify-content-between">@item.Title
+                   <i class="related fa-heart" data-related-keys="@string.Join(',', item.Related)"></i>
+                </li>
+           }
+        </ul>
+    </div>
+</div>
+
+<div id="menuDrawer" class="playlist-drawer">
+    <div class="drawer-header">
+        <h5>Track Menu</h5>
+        <button type="button" class="btn-close" onclick="hideMenu()"></button>
+    </div>
+    <div class="drawer-body">
+        <div id="menu-title">
+             
+        </div>
+        <ul class="list-group" id="menuItems">
+           
+        </ul>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+
+        let editedTrack = {}; 
+
+        function addToQueue(track) {
+ 
+            const state = window.audioState; 
+            const newSongList = [...state.trackList];
+            newSongList.splice(state.currentTrackIndex + 1, 0, track); 
+            window.audioState = {
+                ...state,
+                trackList: newSongList
+            };
+            updatePlaylistUI() 
+        }
+
+        function hideMenu () {
+
+            document.getElementById('menuDrawer').classList.remove('show');
+        }
+
+        function showMenu(track) {
+
+            document.getElementById('menuDrawer').classList.add('show');
+            const menuTitle = document.getElementById('menu-title');
+            menuTitle.innerHTML = track.title;
+            const menu = [
+            {
+            label: "View Artist",
+            caption: track.artistName,
+            icon: "🤺",
+            action: () => gotoPage(`/Detail/artist/${track.artistFk}`),
+            },
+            {
+            label: "View Album",
+            caption: track.albumName,
+            icon: "📀",
+            action: () => gotoPage(`/Detail/album/${track.albumFk}`),
+            },
+            {
+            label: "View Genre",
+            caption: track.genre,
+            icon: "🏷",
+            action: () =>
+                gotoPage(`/Detail/genre/${track.genre.replace(/\//g, "*")}`),
+            },
+            @* {
+            label: "Edit Track",
+            caption: "Modify track details",
+            icon: "✏️",
+            action: editTrack,
+            }, *@
+            {
+            label: "Add to Queue",
+            caption: "Play this song next",
+            icon: "🎵",
+            action: () => addToQueue(track),
+            },
+            {
+                label: "Add to Playlist",
+                caption: "Add this song to a playlist",
+                icon: "➕",
+                action: () => {
+                    hideMenu()
+                     showPlaylist(track);
+
+                },
+            },
+        ];
+
+            menuItems.innerHTML = menu.map((track, index) => `
+                    <li class="list-group-item" 
+                        id="menu-${index}"
+                        style="cursor: pointer;">
+                       <div> ${track.icon}  ${track.label}</div>
+                       <div class="text-muted pl-6 "> ${track.caption}</div>
+                    </li>
+                `).join('');
+
+            for (let o=0;o<menu.length;o++) {
+                var li = document.getElementById('menu-' + o);
+
+                menu[o].action && li.addEventListener('click', menu[o].action );
+
+            }
+        }
+        
+        function showPlaylist(track) {
+            editedTrack = track
+            document.getElementById('playlistEditDrawer').classList.add('show');
+
+            const playlistTitle = document.getElementById('drawer-title');
+            playlistTitle.innerHTML = track.title;
+ 
+
+
+            document.querySelectorAll('.related').forEach(item => { 
+                item.style.cursor = 'pointer';
+                item.classList.remove ("fa-solid")
+                item.classList.remove ("fa-regular")
+                const keys =  item.getAttribute('data-related-keys'); 
+                const ok = keys.indexOf(track.fileKey) > -1
+                  ? "fa-solid"
+                  : "fa-regular";
+
+                item.classList.add(ok);
+                
+                item.addEventListener('click', function(e) {
+                    @* if (!e.target.closest('.track-actions')) {
+                        playTrack(trackId);
+                    } *@
+                });
+            });
+
+        }
+
+        function hidePlaylist() {
+            editedTrack = {}
+            document.getElementById('playlistEditDrawer').classList.remove('show');
+        }
+
+
+        // Simple track data
+        const trackList = @Html.Raw(Json.Serialize(Model.Tracks));
+        
+        console.log('TrackList loaded:', trackList);
+
+        function playTrack(trackId) {
+            console.log('Playing track ID:', trackId);
+            
+            const track = trackList.find(t => t.id === trackId);
+            if (track && window.playGlobalTrack) {
+                console.log('Found track:', track);
+                window.playGlobalTrack(track, trackList, trackList.indexOf(track));
+            } else {
+                console.error('Track not found or player not available');
+            }
+        }
+
+        function playAllTracks() {
+            if (trackList.length > 0 && window.playGlobalTrack) {
+                window.playGlobalTrack(trackList[0], trackList, 0);
+            }
+        }
+
+        // Add click handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.track-title').forEach(item => { 
+                item.style.cursor = 'pointer';
+                const trackId = parseInt(item.getAttribute('data-track-id'));
+                
+                item.addEventListener('click', function(e) {
+                    if (!e.target.closest('.track-actions')) {
+                        playTrack(trackId);
+                    }
+                });
+            });
+
+            
+            document.querySelectorAll('.track-album').forEach(item => { 
+                
+                item.style.cursor = 'pointer';
+                const trackId = parseInt(item.getAttribute('data-track-id'));
+                
+                item.addEventListener('click', function(e) {
+                    const url = `/Detail/album/${trackId}`
+                    gotoPage(url);
+                });
+            });
+
+            document.querySelectorAll('.track-artist').forEach(item => { 
+                item.style.cursor = 'pointer';
+                const trackId = parseInt(item.getAttribute('data-track-id'));
+                
+                item.addEventListener('click', function(e) {
+                    const url = `/Detail/artist/${trackId}`
+                    gotoPage(url);
+                });
+            });
+
+            
+        });
+    </script>
+}
+
+<style>
+    .detail-image-container img {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        border-radius: 8px;
+    }
+    
+    .detail-content h1 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    
+    .detail-actions .btn {
+        border-radius: 25px;
+        padding: 0.5rem 1.5rem;
+    }
+    
+    .tracks-header {
+        border-bottom: 2px solid #dee2e6;
+        padding-bottom: 1rem;
+    }
+    
+    .track-item {
+        transition: background-color 0.2s ease;
+    }
+    
+    .track-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .track-info h6 {
+        color: #333;
+    }
+    
+    .track-actions .btn {
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+    
+    .track-item:hover .track-actions .btn {
+        opacity: 1;
+    }
+</style>

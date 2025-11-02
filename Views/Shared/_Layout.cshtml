@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SkyTunes</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/drawer.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SkyTunesCsharp.styles.css" asp-append-version="true" />
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <img class="logo-dt" src="https://www.sky-tunes.com/assets/icon-72x72.png">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SkyTunes</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">🏠 Home</a>
+                        </li>
+                       <li class="nav-item">
+                            <a class="nav-link text-dark link" onclick="gotoPage('/Library')">📚 Library</a> 
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Grid", "Dash", new { type = "artists" })">🤺 Artists</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Grid", "Dash", new { type = "albums" })">📀 Albumns</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Grid", "Dash", new { type = "genres" })">🏷 Genres</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Grid", "Dash", new { type = "playlists" })">📜 Playlists</a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Search Input -->
+                    <div class="d-flex">
+                        <input type="text" 
+                               id="searchInput" 
+                               class="form-control me-2" 
+                               placeholder="🎵 Search..." 
+                               aria-label="Search">
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid">
+        <main role="main" class="pb-3 workspace">
+            @RenderBody()
+        </main>
+    </div>
+
+      <!-- Audio Player Partial -->
+    @await Html.PartialAsync("_AudioPlayer", new AudioPlayerViewModel())
+    
+    <!-- Your existing scripts -->
+    @await RenderSectionAsync("Scripts", required: false)
+    
+
+    <footer class="border-top footer text-muted">
+        <div class="container-fluid">
+            &copy; 2025 - SkyTunes - Powered by <a href="/">Deepseek API</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script>
+        function gotoPage(url) { 
+            window.location.href = url;
+        }
+
+        // Search functionality with debounce
+        (function() {
+            const searchInput = document.getElementById('searchInput');
+            let debounceTimer;
+
+            function performSearch() {
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm.length > 0) {
+                    // Encode the search term for URL safety
+                    const encodedTerm = encodeURIComponent(searchTerm);
+                    window.location.href = '/Search/' + encodedTerm;
+                }
+            }
+
+            function clearDebounce() {
+                if (debounceTimer) {
+                    clearTimeout(debounceTimer);
+                }
+            }
+
+            searchInput.addEventListener('input', function() {
+                clearDebounce();
+                
+                const searchTerm = this.value.trim();
+                if (searchTerm.length > 0) {
+                    // Set debounce timer for 300ms
+                    debounceTimer = setTimeout(performSearch, 300);
+                }
+            });
+
+            // Also allow pressing Enter for immediate search
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    clearDebounce();
+                    performSearch();
+                }
+            });
+
+            // Clear timer if user navigates away
+            window.addEventListener('beforeunload', clearDebounce);
+        })();
+    </script>
+     
+</body>
+</html>

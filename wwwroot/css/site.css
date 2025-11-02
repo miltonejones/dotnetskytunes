@@ -1,0 +1,238 @@
+:root {
+  --mui-radius: 0.5rem;
+  --mui-shadow-1: 0 1px 3px rgba(0, 0, 0, 0.14), 0 1px 2px rgba(0, 0, 0, 0.12);
+  --mui-shadow-2: 0 3px 6px rgba(0, 0, 0, 0.18), 0 2px 4px rgba(0, 0, 0, 0.16);
+  --mui-shadow-3: 0 6px 10px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.18);
+  --mui-bg: #fff;
+  --mui-fg: #111;
+  --mui-muted: #5f6368;
+  --mui-border: rgba(0, 0, 0, 0.08);
+  --mui-focus: #1976d2;
+}
+
+.track-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.pl-6 {
+  padding-left: 1.5rem;
+}
+.logo-dt {
+  width: 32px;
+  height: 32px;
+  margin-right: 0.5rem;
+  display: inline;
+}
+
+.workspace {
+  height: calc(100vh - 160px);
+  overflow: auto;
+}
+
+.playing-animation {
+  animation: rotate 2s linear infinite;
+}
+
+.link,
+.track-album,
+.track-artist {
+  cursor: pointer;
+}
+
+.link:hover,
+.track-album:hover,
+.track-artist:hover {
+  text-decoration: underline;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card-link:hover {
+  text-decoration: none;
+  color: inherit;
+  transform: translateY(-2px);
+}
+
+.card-link:hover .card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* If you want the entire card to be clickable with proper cursor */
+.card-link .card {
+  cursor: pointer;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+/* Remove any existing hover effects from the card and move to card-link */
+.card-link:hover .card {
+  border-color: #007bff; /* Optional: change border color on hover */
+}
+
+.card {
+  margin: 0.2rem;
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+  border-radius: var(--mui-radius);
+  background: var(--mui-bg);
+  border: 1px solid var(--mui-border);
+  box-shadow: var(--mui-shadow-1);
+}
+
+/* Hover = elevation 2 */
+.card:hover {
+  box-shadow: var(--mui-shadow-2);
+  border-color: transparent;
+}
+
+/* Press = slight downshift */
+.card:active {
+  transform: translateY(1px);
+  box-shadow: var(--mui-shadow-1);
+}
+
+/* Keyboard focus ring */
+.card:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--mui-focus) 60%, transparent);
+  outline-offset: 2px;
+  box-shadow: var(--mui-shadow-3);
+}
+
+.card .card-title {
+  font-size: 1.1rem;
+}
+
+.card img {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  object-fit: cover;
+  border-radius: var(--mui-radius) var(--mui-radius) 0 0;
+}
+
+.card .card-img-overlay {
+  padding: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  border-radius: 0 0 var(--mui-radius) var(--mui-radius);
+}
+
+.card .card-title,
+.card .card-text {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 0 0.25rem;
+  margin: 0.1rem;
+}
+
+.card .card-text.bold {
+  font-weight: 900;
+}
+
+.card h4,
+.card p {
+  margin-bottom: 0;
+}
+
+.card p {
+  font-size: 0.8rem;
+}
+
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.playcard-outer {
+  display: flex;
+  /* align-items: center; */
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 8px;
+}
+
+.playcard-outer:hover {
+  background-color: #f5f5f5;
+}
+
+.playcard-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.playcard-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.playcard-label {
+  /* flex: 1; */
+  min-width: 0;
+}
+
+.playcard-title {
+  font-weight: 500;
+  font-size: 16px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playcard-caption {
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-xl-5 {
+  width: 20%;
+}

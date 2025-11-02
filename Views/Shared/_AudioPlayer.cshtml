@@ -1,0 +1,335 @@
+@model SkyTunesCsharp.Models.AudioPlayerViewModel
+
+<div id="audioPlayer" class="audio-player-container" style="display: none;">
+    <div class="info-panel">
+        <div class="album-photo">
+            <img src="" alt="Track" class="audio-image" id="playerTrackImage" />
+        </div>
+        <div class="track-info">
+            <div class="track-title" id="playerTrackTitle">No track selected</div>
+            <div class="album-name" id="playerAlbumName"></div>
+            <small class="artist-name" id="playerArtistName"></small>
+        </div>
+    </div>
+
+    <div class="player-controls">
+        <div class="progress-container">
+            <input type="range" 
+                   class="form-range progress-bar" 
+                   id="progressBar"
+                   min="0" 
+                   max="100" 
+                   value="0" />
+            <div class="time-display">
+                <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+            </div>
+        </div>
+        
+        <div class="control-buttons">
+        
+            <div class="spinner-border spinner-border-sm me-2" id="thinker" role="status"></div>
+            <button class="btn btn-sm btn-outline-secondary" onclick="playPrevious()" id="prevBtn">
+                ⏮
+            </button>
+            <button class="btn btn-sm btn-primary" onclick="togglePlayPause()" id="playPauseBtn">
+                ▶
+            </button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="playNext()" id="nextBtn">
+                ⏭
+            </button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="showPlaylist()" id="playlistBtn">
+                🎵
+            </button>
+            <button class="btn btn-sm btn-outline-danger" onclick="stopPlayer()">
+                ❌
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Playlist Drawer -->
+<div id="playlistDrawer" class="playlist-drawer">
+    <div class="drawer-header">
+        <h5>Current Playlist</h5>
+        <button type="button" class="btn-close" onclick="hidePlaylist()"></button>
+    </div>
+    <div class="drawer-body">
+        <ul class="list-group" id="playlistItems">
+            <!-- Playlist items will be populated dynamically -->
+        </ul>
+    </div>
+</div>
+
+<style>
+    .audio-player-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-top: 1px solid #dee2e6;
+        padding: 1rem;
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        display: flex;
+        gap: .5rem;
+    }
+
+    .info-panel {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .album-photo {
+        width: 60px;
+        height: 60px;
+        margin-right: 1rem;
+    }
+
+    .audio-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .track-info {
+        flex: 1;
+    }
+
+    .track-title {
+        font-weight: bold;
+        margin-bottom: 0.25rem;
+        cursor:pointer;
+    }
+
+    .album-name, .artist-name {
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+
+    .player-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .progress-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .progress-bar {
+        flex: 1;
+        width: calc(100vw - 500px);
+        background-color: white;
+    }
+
+    .control-buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .drawer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .drawer-body {
+        padding: 1rem;
+        height: calc(100% - 60px);
+        overflow-y: auto;
+    }
+</style>
+
+
+<script>
+    // Global audio state
+    window.audioState = {
+        audio: null,
+        currentTrack: null,
+        trackList: [],
+        currentTrackIndex: -1
+    };
+
+    // CloudFront URL base - update this if needed
+    const CLOUD_FRONT_URL = 'https://s3.amazonaws.com/box.import/';
+
+    // Function to transform FileKey to playable URL
+    function getPlayerURL(fileKey) {
+        if (!fileKey) return '';
+        
+        let audioURL = `${CLOUD_FRONT_URL}${fileKey}`
+            .replace('#', '%23')
+            .replace(/\+/g, '%2B');
+        
+        console.log('Transformed URL:', audioURL); // Debug log
+        return audioURL;
+    }
+
+    function toggleSpinner(show) { 
+     document.getElementById('thinker').style.display = show ? "inline" : "none";
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize audio element
+        window.audioState.audio = new Audio();
+        setupAudioEvents();
+    });
+
+    function setupAudioEvents() {
+        const audio = window.audioState.audio;
+        
+        audio.addEventListener('loadedmetadata', function() {
+            document.getElementById('duration').textContent = formatTime(audio.duration);
+        });
+
+        audio.addEventListener('timeupdate', function() {
+            const progress = (audio.currentTime / audio.duration) * 100 || 0;
+            document.getElementById('progressBar').value = progress;
+            document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+        });
+
+        audio.addEventListener('ended', function() {
+            playNext();
+        });
+
+        // Progress bar seek
+        document.getElementById('progressBar').addEventListener('input', function(e) {
+            const progress = e.target.value;
+            const seekTime = (progress / 100) * audio.duration;
+            audio.currentTime = seekTime;
+        });
+    }
+
+    // Global function to play a track
+    window.playGlobalTrack = function(track, trackList, trackIndex) {
+        console.log('playGlobalTrack called:', track); // Debug log
+        
+        if (!track || !track.fileKey) {
+            console.error('No track or fileKey provided:', track);
+            return;
+        }
+        
+        window.audioState.trackList = trackList || [];
+        window.audioState.currentTrackIndex = trackIndex || 0;
+        window.audioState.currentTrack = track; 
+        
+        const audio = window.audioState.audio;
+        
+        // Transform FileKey to proper URL
+        const audioUrl = getPlayerURL(track.fileKey);
+        if (!audioUrl) {
+            console.error('Could not generate audio URL from fileKey:', track.fileKey);
+            return;
+        }
+        
+        audio.src = audioUrl;
+
+
+        audio.load();
+        
+        // Update UI
+        document.getElementById('audioPlayer').style.display = 'flex';
+        document.getElementById('playerTrackImage').src = track.albumImage || '/images/placeholder.jpg';
+        document.getElementById('playerTrackTitle').textContent = track.title || 'Unknown Track';
+        document.getElementById('playerAlbumName').textContent = track.albumName || '';
+        document.getElementById('playerArtistName').textContent = track.artistName || '';
+        
+        updatePlaylistUI();
+
+        toggleSpinner(true) 
+        announceChange(
+            track.artistName,
+            track.title,
+            track.trackTime,
+            'deep',
+            function() { audio.volume = 0.3; play();},
+            function() { audio.volume = 1;  }
+        )
+        
+        
+
+       
+        
+        console.log('Track loaded successfully:', track.title); // Debug log
+    };
+
+    function togglePlayPause() {
+        const audio = window.audioState.audio;
+        if (audio.paused) {
+            play();
+        } else {
+            pause();
+        }
+    }
+
+    function play() {
+        const audio = window.audioState.audio;
+        audio.play();
+        document.getElementById('playPauseBtn').innerHTML = '⏸';
+        toggleSpinner(false) ; 
+    }
+
+    function pause() {
+        const audio = window.audioState.audio;
+        audio.pause();
+        document.getElementById('playPauseBtn').innerHTML = '▶';
+    }
+
+    function playNext() {
+        const state = window.audioState;
+        if (state.currentTrackIndex < state.trackList.length - 1) {
+            const nextTrack = state.trackList[state.currentTrackIndex + 1];
+            window.playGlobalTrack(nextTrack, state.trackList, state.currentTrackIndex + 1);
+        }
+    }
+
+    function playPrevious() {
+        const state = window.audioState;
+        if (state.currentTrackIndex > 0) {
+            const prevTrack = state.trackList[state.currentTrackIndex - 1];
+            window.playGlobalTrack(prevTrack, state.trackList, state.currentTrackIndex - 1);
+        }
+    }
+
+    function stopPlayer() {
+        const audio = window.audioState.audio;
+        audio.pause();
+        audio.currentTime = 0;
+        document.getElementById('audioPlayer').style.display = 'none';
+        document.getElementById('playPauseBtn').innerHTML = '▶';
+        
+        // Reset state
+        window.audioState.currentTrack = null;
+        window.audioState.currentTrackIndex = -1;
+    }
+
+    function showPlaylist() {
+        document.getElementById('playlistDrawer').classList.add('show');
+    }
+
+    function hidePlaylist() {
+        document.getElementById('playlistDrawer').classList.remove('show');
+    }
+
+    function formatTime(seconds) {
+        if (!seconds || seconds < 0) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Debug function to test URL transformation
+    window.testURLTransformation = function(fileKey) {
+        console.log('Original FileKey:', fileKey);
+        console.log('Transformed URL:', getPlayerURL(fileKey));
+    };
+</script>

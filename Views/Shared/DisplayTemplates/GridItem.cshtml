@@ -1,0 +1,47 @@
+@model object
+
+@{
+    // Extract common properties dynamically
+    var id = Model.GetType().GetProperty("SafeKey")?.GetValue(Model)?.ToString() 
+             ?? Model.GetType().GetProperty("ID")?.GetValue(Model)?.ToString() 
+             ?? Model.GetType().GetProperty("Id")?.GetValue(Model)?.ToString();
+    
+    var name = Model.GetType().GetProperty("Name")?.GetValue(Model)?.ToString() 
+               ?? Model.GetType().GetProperty("Title")?.GetValue(Model)?.ToString()
+               ?? Model.GetType().GetProperty("Genre")?.GetValue(Model)?.ToString();
+    
+    var thumbnail = Model.GetType().GetProperty("Thumbnail")?.GetValue(Model)?.ToString()
+                    ?? Model.GetType().GetProperty("AlbumImage")?.GetValue(Model)?.ToString()
+                    ?? Model.GetType().GetProperty("Image")?.GetValue(Model)?.ToString();
+    
+    var trackCount = (int)(Model.GetType().GetProperty("TrackCount")?.GetValue(Model) ?? 0);
+    var artistName = Model.GetType().GetProperty("ArtistName")?.GetValue(Model)?.ToString();
+    
+    // Determine the type for the details link
+    var type = Model.GetType().Name switch
+    {
+        string s when s.Contains("Artist") => "artist",
+        string s when s.Contains("Album") => "album", 
+        string s when s.Contains("Playlist") => "playlist",
+        string s when s.Contains("Genre") => "genre",
+        _ => "unknown"
+    };
+}
+<div class="card" >
+    <img class="card-img-top fallback" src="@thumbnail" alt="@name" data-fallback="https://www.sky-tunes.com/assets/default_album_cover.jpg"/>
+    <div class="card-img-overlay" onclick="gotoPage('/Detail/@type/@id')"> 
+        <h4 class="card-title">@name</h4>
+        <p class="card-text bold">
+        @if (!string.IsNullOrEmpty(artistName))
+        {
+            <p class="text-muted small mb-1">@artistName</p>
+        }
+        
+        @if (trackCount > 0)
+        {
+            <p class="text-muted small">@trackCount @(trackCount == 1 ? "track" : "tracks")</p>
+        }
+        </p> 
+    </div>
+</div>
+

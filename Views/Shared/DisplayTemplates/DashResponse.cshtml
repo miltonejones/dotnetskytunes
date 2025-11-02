@@ -1,0 +1,15 @@
+@model SkyTunesCsharp.Models.DashResponse
+@using SkyTunesCsharp.Helpers
+
+@{
+    var detailUrl = NavigationHelpers.GetDetailUrl(Model.Type, Model.ID);
+    var truncatedCaption = NavigationHelpers.TruncateText(Model.Caption, 50);
+}
+
+<div class="card" onclick="gotoPage('@NavigationHelpers.GetDetailUrl(Model.Type, Model.ID)')">
+    <img class="card-img-top" src="@NavigationHelpers.GetImageUrl(Model.Thumbnail)" alt="@Model.Name" />
+    <div class="card-img-overlay"> 
+        <h4 class="card-title">@Model.Name</h4>
+        <p class="card-text bold">@Model.Caption</p> 
+    </div>
+</div>

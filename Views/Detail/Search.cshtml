@@ -1,0 +1,52 @@
+@model SkyTunesCsharp.Models.SearchViewModel
+ 
+
+<div class="container-fluid">
+
+    <div class="row">  
+        <div class="col-4"> 
+            <b>Music results</b>
+            @foreach (var track in Model.Tracks)
+            {
+                    @Html.DisplayFor(m => track)
+            }
+        </div>
+        <div class="col-4">
+            <b>Album results</b>
+            <div class="row">  
+                @foreach (var album in Model.Albums)
+                {
+                    <div class="col-6">
+                        @Html.DisplayFor(m => album, "GridItem")
+                    </div>
+                }
+            </div>
+       
+        </div>
+        <div class="col-4">
+            <b>Arists results</b>
+            <div class="row">  
+                @foreach (var artist in Model.Artists)
+                {
+                    <div class="col-6">
+                        @Html.DisplayFor(m => artist, "GridItem")
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts {
+    <script>
+
+        window.trackList = @Html.Raw(Json.Serialize(Model.Tracks));
+        
+        console.log('TrackList loaded:', trackList);
+ 
+    </script>
+
+}

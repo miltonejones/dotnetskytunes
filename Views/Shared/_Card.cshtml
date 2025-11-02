@@ -1,0 +1,18 @@
+@model SkyTunesCsharp.Models.DashResponse
+
+<div class="card" onclick="gotoPage('@Model.ID')">
+    <img class="card-img-top" src="@Model.ImageLg" alt="@Model.Name" />
+    <div class="card-img-overlay">
+        <h4 class="card-title">@Model.Name</h4>
+        <p class="card-text bold">@Model.Caption</p>
+        <p class="card-text">@Model.Thumbnail</p>
+    </div>
+</div>
+
+<script>
+    function gotoPage(id) {
+        // Implement your navigation logic here
+        console.log('Navigating to item:', id);
+        // window.location.href = '/Details/' + id;
+    }
+</script>

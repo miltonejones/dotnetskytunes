@@ -1,0 +1,29 @@
+@model SkyTunesCsharp.Models.TrackDto
+
+<div class="track-item d-flex align-items-center p-3 border-bottom">
+    <div class="track-info flex-grow-1">
+        <div class="d-flex gap-1">
+        <img src="@Model.AlbumImage" alt="@Model.Title" class="track-icon" />
+        <div>
+        <h6 class="mb-1 track-title" 
+            onclick="playTrackObject(@Model.Id)"
+        data-track-id="@Model.Id">@Model.Title</h6> 
+        <small class="text-muted">
+          
+                <div class="d-flex gap-1">
+                <div class="track-artist" data-track-id="@Model.ArtistFk"
+                    onclick="gotoPage('/Detail/artist/@Model.ArtistFk')"
+                >@Model.ArtistName</div> 
+                 •   
+                <div class="track-album" data-track-id="@Model.AlbumFk"
+                    onclick="gotoPage('/Detail/album/@Model.AlbumFk')">@Model.AlbumName</div>
+                </div>
+        </small>
+        </div>
+        </div>
+    </div>
+    <div class="track-duration text-muted">
+        @Model.TrackTime
+    </div>
+    
+</div>
