@@ -35,13 +35,13 @@ namespace SkyTunesCsharp.Models
         public int? ArtistFk { get; set; }
 
         [JsonPropertyName("discNumber")]
-        public object? DiscNumber { get; set; }
+        public int? DiscNumber { get; set; }
 
         [JsonPropertyName("trackTime")]
         public object? TrackTime { get; set; }
 
         [JsonPropertyName("trackNumber")]
-        public object? TrackNumber { get; set; }
+        public int? TrackNumber { get; set; }
 
         [JsonPropertyName("FileSize")]
         public object? FileSize { get; set; }

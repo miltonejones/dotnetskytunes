@@ -101,7 +101,7 @@ function updatePlaylistUI() {
         (track, index) => `
           <li class="list-group-item track-item ${
             index === state.currentTrackIndex ? "active" : ""
-          }"
+          } ${track.queued ? "queued" : ""}"
               onclick="window.playGlobalTrack(window.audioState.trackList[${index}], window.audioState.trackList, ${index})"
               style="cursor: pointer;">
               ${track.title} - ${track.artistName}

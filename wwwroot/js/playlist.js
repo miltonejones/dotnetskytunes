@@ -39,6 +39,7 @@ const updateList = async (playlist) => {
 
 function showToast(message) {
   const messageBox = document.getElementById("toast-message");
+  if (!messageBox) return;
   messageBox.innerHTML = message;
   const toast = new bootstrap.Toast(document.getElementById("liveToast"));
   toast.show();
@@ -52,6 +53,26 @@ function saveToPlaylist(listKey) {
   if (!item) return alert("Could not find playlist " + listKey);
   updateList(item);
 }
+
+const setPhoto = async (listKey) => {
+  const playlist = currentPlayLists.find((f) => f.listKey === listKey);
+  const ok = confirm(
+    `Set playlist ${playlist.Title} image to the album art from "${editedTrack.title}"?`
+  );
+  if (!ok) return;
+  const updated = {
+    ...playlist,
+    image: editedTrack.albumImage,
+    items: null,
+    track: null,
+  };
+  hideMenu();
+  await savePlaylist(updated);
+  showToast(`"${updated.Title}" thumbnail updated!`);
+  setTimeout(() => {
+    location.reload();
+  }, 2999);
+};
 
 function updateDrawerIcons() {
   getPlaylistGrid().then((data) => {
@@ -169,3 +190,14 @@ const handleDrop = (e, dropIndex, listKey) => {
     });
   }
 };
+
+function highlightRow(id) {
+  document.querySelectorAll(".track-row").forEach((item) => {
+    item.classList.remove("playing");
+    const key = item.getAttribute("data-track-id");
+    console.log({ id, key });
+    if (id == key) {
+      item.classList.add("playing");
+    }
+  });
+}

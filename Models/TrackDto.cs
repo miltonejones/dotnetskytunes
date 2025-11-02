@@ -34,8 +34,12 @@ namespace SkyTunesCsharp.Models
         public int AlbumFk { get; set; }
 
         [JsonPropertyName("artistFk")]
-        public int ArtistFk { get; set; } 
+        public int ArtistFk { get; set; }  
         
+        [JsonPropertyName("discNumber")]
+        public int DiscNumber { get; set; } 
+        
+
         public bool Favorite { get; set; }
 
     }

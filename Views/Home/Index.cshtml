@@ -7,8 +7,13 @@
 
 <div class="container-fluid">
    
-    
-<h2>Featured Playlists</h2>
+<div class="mb-2">
+@Html.Partial("_ArtistCarousel", Model.CarouselItems)
+</div>
+
+ 
+    <h5>📜 Featured Playlists</h5> 
+
     <div class="row">
     @foreach (var item in Model.PlaylistItems)
     {
@@ -18,7 +23,7 @@
     }
     </div>
     
-<h2>Featured Albums</h2>
+<h5>🤺 Featured Artists</h5>
     <div class="row">
     @foreach (var item in Model.ArtistItems)
     {
@@ -28,7 +33,7 @@
     }
     </div>
     
-<h2>Featured Albums</h2>
+<h5>📀 Featured Albums</h5>
     <div class="row">
     @foreach (var item in Model.AlbumItems)
     {

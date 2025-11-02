@@ -13,24 +13,44 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly IDashService _dashService;
-    private readonly ICompositeViewEngine _viewEngine;
+    private readonly ICompositeViewEngine _viewEngine;  
+    private readonly string _longString;
 
-    public HomeController(IDashService dashService, ICompositeViewEngine viewEngine, ILogger<HomeController> logger)
+
+    public HomeController(
+        IDashService dashService, 
+        ICompositeViewEngine viewEngine, 
+        ILogger<HomeController> logger,
+        IConfiguration configuration)  // Keep IConfiguration
     {
         _dashService = dashService;
         _viewEngine = viewEngine;
         _logger = logger;
+        
+        // Safe way to get the configuration value
+        _longString = configuration.GetValue<string>("AppStrings:Fallback") ?? string.Empty;
+        
+        // Log to verify it's working
+        _logger.LogInformation($"Fallback string length: {_longString?.Length ?? 0}");
     }
+
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
         try
         {
-            _logger.LogInformation("HomeController Index method called");
+            // _logger.LogInformation("HomeController Index method called");
             
             var dashItems = await _dashService.GetDashResponse();
             _logger.LogInformation($"Retrieved {dashItems?.Count ?? 0} items from service");
+
+            var carouselItems = dashItems?
+                .Where(item => item.Type?.ToLower() == "artist" && item.ImageLg?.Length > 0)
+                .OrderBy(x => Guid.NewGuid()) // Randomize
+                .Take(12)
+                .ToList() ?? new List<DashResponse>();
+ 
 
 
             var artistItems = dashItems?
@@ -52,13 +72,20 @@ public class HomeController : Controller
                 .OrderBy(x => Guid.NewGuid()) // Randomize
                 .Take(8)
                 .ToList() ?? new List<PlaylistItem>();
+ 
+ 
+            var carouselModel = new ArtistCarouselViewModel
+            {
+                Artists = carouselItems,
+                FallbackImage = _longString
+            };
 
-//        public List<DashResponse> PlaylistItems { get; set; } = new List<PlaylistItem>();
-            var model = new DashViewModel 
+            var model = new DashViewModel
             {
                 ArtistItems = artistItems,
                 AlbumItems = albumItems,
-                PlaylistItems = listItems
+                PlaylistItems = listItems,
+                CarouselItems = carouselModel
             };
             
             return View("Index", model);

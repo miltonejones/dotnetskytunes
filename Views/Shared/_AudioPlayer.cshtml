@@ -195,6 +195,15 @@
             const progress = (audio.currentTime / audio.duration) * 100 || 0;
             document.getElementById('progressBar').value = progress;
             document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+
+            const persist = {
+                ...window.audioState,
+                audio: null,
+                time: audio.currentTime
+            }
+            console.log (persist)
+            sessionStorage.setItem('audioState', JSON.stringify(persist));
+
         });
 
         audio.addEventListener('ended', function() {
@@ -205,19 +214,37 @@
         document.getElementById('progressBar').addEventListener('input', function(e) {
             const progress = e.target.value;
             const seekTime = (progress / 100) * audio.duration;
+            console.log ({ seekTime })
             audio.currentTime = seekTime;
         });
+
+        const persisted =  sessionStorage.getItem('audioState');
+        if (persisted) {
+            const old = JSON.parse(persisted)
+            window.audioState = {
+                ...window.audioState,
+                ...old,
+                audio
+            }
+             window.playGlobalTrack (
+                window.audioState.currentTrack, 
+                window.audioState.trackList, 
+                window.audioState.currentTrackIndex,
+                old.time
+             ) 
+        }
     }
 
     // Global function to play a track
-    window.playGlobalTrack = function(track, trackList, trackIndex) {
+    window.playGlobalTrack = function(track, trackList, trackIndex, time) {
         console.log('playGlobalTrack called:', track); // Debug log
+
         
         if (!track || !track.fileKey) {
             console.error('No track or fileKey provided:', track);
             return;
         }
-        
+        highlightRow(track.id)
         window.audioState.trackList = trackList || [];
         window.audioState.currentTrackIndex = trackIndex || 0;
         window.audioState.currentTrack = track; 
@@ -235,6 +262,8 @@
 
 
         audio.load();
+
+       
         
         // Update UI
         document.getElementById('audioPlayer').style.display = 'flex';
@@ -245,20 +274,27 @@
         
         updatePlaylistUI();
 
+        document.querySelectorAll(".workspace").forEach((item) => { 
+            item.classList.add("playing"); 
+        });
+
+        if (time) {
+            return play(time)
+        }
+
         toggleSpinner(true) 
+
         announceChange(
             track.artistName,
             track.title,
             track.trackTime,
             'deep',
-            function() { audio.volume = 0.3; play();},
-            function() { audio.volume = 1;  }
+            function() { audio.volume = 0.3; play();  },
+            function() { audio.volume = 1; }
         )
         
         
-
-       
-        
+        showToast(`Now playing ${track.title}`) 
         console.log('Track loaded successfully:', track.title); // Debug log
     };
 
@@ -271,9 +307,12 @@
         }
     }
 
-    function play() {
+    function play(time) {
         const audio = window.audioState.audio;
         audio.play();
+        if (time) { 
+            audio.currentTime = time;
+        }
         document.getElementById('playPauseBtn').innerHTML = '⏸';
         toggleSpinner(false) ; 
     }
@@ -310,6 +349,12 @@
         // Reset state
         window.audioState.currentTrack = null;
         window.audioState.currentTrackIndex = -1;
+        highlightRow();
+
+
+        document.querySelectorAll(".workspace").forEach((item) => { 
+            item.classList.remove("playing"); 
+        });
     }
 
     function showPlaylist() {

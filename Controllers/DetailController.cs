@@ -110,6 +110,16 @@ namespace SkyTunesCsharp.Controllers
                             var albumDetail = await _dashService.GetAlbumDetail(albumId);
                             if (albumDetail?.Row?.FirstOrDefault() != null)
                             {
+                                var sortedTracks = albumDetail.Related?.Records
+                                      .GroupBy(t => new { 
+                                        DiscNumber = t.DiscNumber ?? 1, 
+                                        TrackNumber = t.TrackNumber ?? 1
+                                    })
+                                    .Select(g => g.First())
+                                    .OrderBy(t => t.DiscNumber ?? 1)  // Handle null DiscNumber
+                                    .ThenBy(t => t.TrackNumber ?? 1)  // Handle null TrackNumber
+                                    .ToList();
+
                                 var album = albumDetail.Row.First();
                                 viewModel.Title = album.Name ?? "Unknown Album";
                                 viewModel.ImageUrl = album.Thumbnail;
@@ -183,6 +193,7 @@ namespace SkyTunesCsharp.Controllers
                 AlbumFk = track.AlbumFk ?? 0,
                 ArtistFk = track.ArtistFk ?? 0,
                 TrackNumber = track.SafeTrackNumber,
+                DiscNumber = track.SafeDiscNumber,
                 Favorite = favoriteItems?.Contains(track.FileKey ?? string.Empty) == true
             }).ToList();
         }

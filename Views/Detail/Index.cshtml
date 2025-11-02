@@ -99,28 +99,42 @@
             <div class="tracks-list">
                 @if (Model.Tracks.Any())
                 {
+                    int discNumber = 0;
+                    bool showDiscHeaders = Model.Tracks.Any(t => t.DiscNumber > 1) && Model.Type?.ToLower() == "album";
+
                     for (int i = 0; i < Model.Tracks.Count; i++)
                     {
+
                         var track = Model.Tracks[i];
                         string  heart = track.Favorite == true ? "solid" : "regular";
                         // @Html.Raw(Json.Serialize(track))
                         string draggable = Model.ListKey.Length > 0 ? "true" : "false";
+                        
 
-                        <div class="track-item d-flex align-items-center p-3 border-top"
+                        if (track.DiscNumber > 0 && track.DiscNumber != discNumber && showDiscHeaders) {
+                            discNumber = track.DiscNumber;
+                            <div  class="d-flex align-items-center p-3 border-bottom">
+                                Disc @discNumber
+                            </div>
+                        }
+
+                        <div class="track-item track-row d-flex align-items-center p-3 border-top"
                             draggable="@draggable"
                             ondragstart='handleDragStart(event, @Html.Raw(Json.Serialize(track)), @i)'
                             ondragover="handleDragOver(event, @i)"
                             ondragleave="handleDragLeave(event)"
                             ondrop="handleDrop(event, @i, '@Model.ListKey')" 
+                            data-track-id="@track.Id"
                         >
                         
                         
                             <div class="track-number me-3" style="width: 30px;">
-                                <span class="text-muted">@(i + 1)</span>
+                                <span class="text-muted">@track.TrackNumber</span>
                             </div>
                             <div class="track-info flex-grow-1">
                                <div class="d-flex gap-1">
-                                <img src="@track.AlbumImage" alt="@track.Title" class="track-icon" />
+                                <img src="@track.AlbumImage" alt="@track.Title" class="track-icon fallback" 
+                                    data-fallback="https://www.sky-tunes.com/assets/icon-72x72.png"/>
                                 <div>
                                 <h6 class="mb-1 track-title" data-track-id="@track.Id">@track.Title</h6>
                                 <small class="text-muted">
@@ -215,9 +229,9 @@
     <script>
 
         let editedTrack = {}; 
-
-        function addToQueue(track) {
- 
+        const pageListKey = "@Model.ListKey";
+@* 
+        function addToQueue(track) { 
             const state = window.audioState; 
             const newSongList = [...state.trackList];
             newSongList.splice(state.currentTrackIndex + 1, 0, track); 
@@ -227,7 +241,43 @@
             };
             updatePlaylistUI() ;
             hideMenu();
+            showToast(`${track.title} added to queue`)
+        } *@
+
+        function addToQueue(track) { 
+            // Add queued property to the track
+            const queuedTrack = {
+                ...track,
+                queued: true
+            };
+            
+            const state = window.audioState; 
+            const newSongList = [...state.trackList];
+            
+            // Find the index of the last queued track
+            let insertIndex = state.currentTrackIndex + 1; // Default to after current track
+            
+            // Look for the last track with queued property
+            for (let i = state.trackList.length - 1; i > state.currentTrackIndex; i--) {
+                if (state.trackList[i].queued) {
+                    insertIndex = i + 1;
+                    break;
+                }
+            }
+            
+            // Insert the new queued track at the found position
+            newSongList.splice(insertIndex, 0, queuedTrack);
+            
+            window.audioState = {
+                ...state,
+                trackList: newSongList
+            };
+            
+            updatePlaylistUI();
+            hideMenu();
+            showToast(`"${track.title}" added to queue`);
         }
+
 
         function hideMenu () {
 
@@ -236,6 +286,7 @@
 
         function showMenu(track) {
 
+            editedTrack = track;
             document.getElementById('menuDrawer').classList.add('show');
             const menuTitle = document.getElementById('menu-title');
             menuTitle.innerHTML = track.title;
@@ -258,13 +309,7 @@
             icon: "🏷",
             action: () =>
                 gotoPage(`/Detail/genre/${track.genre.replace(/\//g, "*")}`),
-            },
-            @* {
-            label: "Edit Track",
-            caption: "Modify track details",
-            icon: "✏️",
-            action: editTrack,
-            }, *@
+            }, 
             {
             label: "Add to Queue",
             caption: "Play this song next",
@@ -282,6 +327,15 @@
                 },
             },
         ];
+
+        if (pageListKey.length) {
+             menu.push({
+                label: "Update Playlist thumbnail",
+                caption: "Set playlist thumbnail to this song artwork",
+                icon: "🖼",
+                action: () => setPhoto(pageListKey),
+            }); 
+        }
 
             menuItems.innerHTML = menu.map((track, index) => `
                     <li class="list-group-item" 

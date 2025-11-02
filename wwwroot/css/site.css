@@ -16,6 +16,19 @@
   border-radius: 50%;
 }
 
+.track-row.playing img {
+  animation: rotate 2s linear infinite;
+}
+
+.track-row.playing .track-title {
+  color: red;
+}
+
+.track-item.queued {
+  font-style: italic;
+  color: gray;
+}
+
 @keyframes rotate {
   from {
     transform: rotate(0deg);
@@ -24,6 +37,7 @@
     transform: rotate(360deg);
   }
 }
+
 .pl-6 {
   padding-left: 1.5rem;
 }
@@ -36,11 +50,13 @@
 
 .workspace {
   height: calc(100vh - 160px);
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: height 0.3s linear;
 }
 
-.playing-animation {
-  animation: rotate 2s linear infinite;
+.workspace.playing {
+  height: calc(100vh - 220px);
 }
 
 .link,

@@ -15,7 +15,7 @@
     <div class="row">
         @if (Model.Records?.Count > 0)
         {
-            @foreach (var playlist in Model.Records)
+            @foreach (var playlist in Model.Records.OrderBy(p => p.Title))
             {
                 <div class="col-xl-5 col-lg-3 col-md-4 col-sm-6 mb-4">
                     @Html.DisplayFor(m => playlist, "GridItem")

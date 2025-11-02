@@ -1,0 +1,181 @@
+@model ArtistCarouselViewModel
+
+@{
+    var validArtists = Model.Artists?.Where(a => !string.IsNullOrEmpty(a.ImageLg)).ToList() ?? new List<DashResponse>();
+    var currentIndex = 0; // In real implementation, you'd manage this state
+    var currentArtist = validArtists.FirstOrDefault();
+}
+
+@if (validArtists.Count <= 1)
+{
+    <div>No artists to display</div>
+    return;
+}
+
+<div class="carousel-outer" id="artistCarousel">
+    <div class="carousel-container" id="carouselContainer">
+        <!-- Previous slide - only visible during prev transition -->
+        <div class="carousel-slide prev" id="prevSlide" style="display: none;">
+            <img src="@Model.FallbackImage" alt="Previous artist" 
+                 onerror="this.src='@Model.FallbackImage'" />
+        </div>
+
+        <!-- Current active slide -->
+        <div class="carousel-slide active" id="activeSlide">
+            <img src="@currentArtist?.ImageLg" alt="@currentArtist?.Name" 
+                 onerror="this.src='@Model.FallbackImage'" />
+        </div>
+
+        <!-- Next slide - only visible during next transition -->
+        <div class="carousel-slide next" id="nextSlide" style="display: none;">
+            <img src="@Model.FallbackImage" alt="Next artist" 
+                 onerror="this.src='@Model.FallbackImage'" />
+        </div>
+    </div>
+
+    <!-- Carousel indicators -->
+    @if (validArtists.Count > 1)
+    {
+        <div class="carousel-indicators">
+            @for (int i = 0; i < validArtists.Count; i++)
+            {
+                <button class="indicator @(i == 0 ? "active" : "")" 
+                        data-index="@i" onclick="goToSlide(@i)">
+                </button>
+            }
+        </div>
+    }
+
+    <!-- Navigation arrows -->
+    @if (validArtists.Count > 1)
+    {
+        <button class="carousel-arrow carousel-arrow-prev" onclick="handlePrev()">
+            ‹
+        </button>
+        <button class="carousel-arrow carousel-arrow-next" onclick="handleNext()">
+            ›
+        </button>
+    }
+
+    <div class="carousel-box">
+        <div class="info-label">Artist</div>
+        <div class="info-title" id="artistName">@currentArtist?.Name</div>
+        <div class="info-caption">
+            @if (validArtists.Count > 1)
+            {
+                <span class="carousel-counter" id="carouselCounter">
+                    1 of @validArtists.Count 
+                </span>
+            }
+        </div>
+        <button class="rounded-b-sm" onclick="gotoPage('/Detail/artist/@currentArtist?.ID')">
+            Explore Artist
+        </button>
+    </div>
+</div>
+
+<script>
+    // Carousel state management
+    let currentIndex = 0;
+    const artists = @Html.Raw(Json.Serialize(validArtists));
+    const fallbackImage = '@Model.FallbackImage';
+
+    // Auto-advance carousel
+    let carouselInterval;
+
+    function startCarousel() {
+        if (artists.length <= 1) return;
+        
+        carouselInterval = setInterval(() => {
+            handleNext();
+        }, 5000);
+    }
+
+    function stopCarousel() {
+        if (carouselInterval) {
+            clearInterval(carouselInterval);
+        }
+    }
+
+    function handleNext() {
+        const nextIndex = (currentIndex + 1) % artists.length;
+        transitionToSlide(nextIndex, 'next');
+    }
+
+    function handlePrev() {
+        const prevIndex = currentIndex === 0 ? artists.length - 1 : currentIndex - 1;
+        transitionToSlide(prevIndex, 'prev');
+    }
+
+    function goToSlide(index) {
+        if (index === currentIndex) return;
+        const direction = index > currentIndex ? 'next' : 'prev';
+        transitionToSlide(index, direction);
+    }
+
+    function transitionToSlide(newIndex, direction) {
+        stopCarousel(); // Pause auto-advance during manual navigation
+        
+        const container = document.getElementById('carouselContainer');
+        const activeSlide = document.getElementById('activeSlide');
+        const targetSlide = direction === 'next' 
+            ? document.getElementById('nextSlide') 
+            : document.getElementById('prevSlide');
+        
+        // Set up target slide
+        const targetArtist = artists[newIndex];
+        targetSlide.querySelector('img').src = targetArtist.imageLg || fallbackImage;
+        targetSlide.querySelector('img').alt = targetArtist.name;
+        
+        // Show target slide and set direction class
+        targetSlide.style.display = 'block';
+        container.className = `carousel-container ${direction}`;
+        
+        // After animation completes
+        setTimeout(() => {
+            // Update current index and artist info
+            currentIndex = newIndex;
+            updateArtistInfo();
+            
+            // Reset slides
+            container.className = 'carousel-container';
+            activeSlide.querySelector('img').src = targetArtist.imageLg || fallbackImage;
+            activeSlide.querySelector('img').alt = targetArtist.name;
+            targetSlide.style.display = 'none';
+            
+            // Update indicators
+            updateIndicators();
+            
+            // Restart carousel
+            startCarousel();
+        }, 800);
+    }
+
+    function updateArtistInfo() {
+        const currentArtist = artists[currentIndex];
+        document.getElementById('artistName').textContent = currentArtist.Name;
+        document.getElementById('carouselCounter').textContent = 
+            `${currentIndex + 1} of ${artists.length}`;
+    }
+
+    function updateIndicators() {
+        document.querySelectorAll('.indicator').forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    function exploreArtist(artistId) {
+        window.location.href = '/Artist/Detail/' + artistId;
+    }
+
+    // Initialize carousel
+    document.addEventListener('DOMContentLoaded', function() {
+        startCarousel();
+        
+        // Pause on hover
+        const carousel = document.getElementById('artistCarousel');
+        carousel.addEventListener('mouseenter', stopCarousel);
+        carousel.addEventListener('mouseleave', startCarousel);
+    });
+</script>
+ 
