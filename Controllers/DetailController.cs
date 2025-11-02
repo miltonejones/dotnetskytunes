@@ -38,8 +38,13 @@ namespace SkyTunesCsharp.Controllers
         {
                 var listItems = await _dashService.GetPlaylistGrid();
                 var favoriteFileKeys = await _dashService.GetAllRelatedStringsFromPlaylists();
-                var viewModel = new DetailViewModel { Type = "music", CurrentPage = page ,
-                    PlayListItems = listItems.Records};
+                var viewModel = new DetailViewModel
+                {
+                    Type = "music",
+                    CurrentPage = page,
+                    PlayListItems = listItems.Records,
+                    ListKey = ""
+                };
                 var musicDetail = await _dashService.GetLibraryPage(page);
 
                 viewModel.Title = "Your Library";
@@ -76,7 +81,8 @@ namespace SkyTunesCsharp.Controllers
                 var viewModel = new DetailViewModel
                 {
                     Type = type.ToLower(),
-                    PlayListItems = listItems.Records
+                    PlayListItems = listItems.Records,
+                    ListKey = ""
                 };
                 var favoriteFileKeys = await _dashService.GetAllRelatedStringsFromPlaylists();
 
