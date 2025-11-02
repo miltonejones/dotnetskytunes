@@ -3,7 +3,7 @@
 <div id="audioPlayer" class="audio-player-container" style="display: none;">
     <div class="info-panel">
         <div class="album-photo">
-            <img src="" alt="Track" class="audio-image" id="playerTrackImage" />
+            <img src="" alt="Track" class="audio-image fallback" data-fallback="https://www.sky-tunes.com/assets/default_album_cover.jpg" id="playerTrackImage" />
         </div>
         <div class="track-info">
             <div class="track-title" id="playerTrackTitle">No track selected</div>
@@ -282,7 +282,8 @@
             return play(time)
         }
 
-        toggleSpinner(true) 
+        toggleSpinner(true) ;
+        fixImages();
 
         announceChange(
             track.artistName,

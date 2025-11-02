@@ -34,7 +34,7 @@ const updateList = async (playlist) => {
   showToast(`"${editedTrack.title}" ${verb} "${playlist.Title}"`);
 
   updatePlaylistIcons();
-  hidePlaylist();
+  hidePlaylistEditor();
 };
 
 function showToast(message) {

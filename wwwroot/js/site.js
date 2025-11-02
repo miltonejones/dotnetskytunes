@@ -80,14 +80,16 @@ function doFallback(picture, src, fallback) {
   image.src = src;
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+function fixImages() {
   document.querySelectorAll(".fallback").forEach((item) => {
     var src = item.src;
     var fallback = item.getAttribute("data-fallback");
     // console.log({ src, fallback });
     doFallback(item, src, fallback);
   });
-});
+}
+
+document.addEventListener("DOMContentLoaded", fixImages);
 
 function updatePlaylistUI() {
   const playlistContainer = document.getElementById("playlistItems");
