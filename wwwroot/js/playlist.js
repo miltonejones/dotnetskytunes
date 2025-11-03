@@ -31,16 +31,18 @@ const updateList = async (playlist) => {
 
   await savePlaylist(updated);
 
-  showToast(`"${editedTrack.title}" ${verb} "${playlist.Title}"`);
+  showToast(`"${editedTrack.title}" ${verb} playlist "${playlist.Title}"`);
 
   updatePlaylistIcons();
   hidePlaylistEditor();
 };
 
-function showToast(message) {
+function showToast(message, title = "Success!") {
   const messageBox = document.getElementById("toast-message");
+  const messageTitle = document.getElementById("toast-title");
   if (!messageBox) return;
   messageBox.innerHTML = message;
+  messageTitle.innerHTML = title;
   const toast = new bootstrap.Toast(document.getElementById("liveToast"));
   toast.show();
 }

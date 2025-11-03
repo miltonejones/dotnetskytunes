@@ -5,10 +5,10 @@
         <div class="album-photo">
             <img src="" alt="Track" class="audio-image fallback" data-fallback="https://www.sky-tunes.com/assets/default_album_cover.jpg" id="playerTrackImage" />
         </div>
-        <div class="track-info">
-            <div class="track-title" id="playerTrackTitle">No track selected</div>
-            <div class="album-name" id="playerAlbumName"></div>
-            <small class="artist-name" id="playerArtistName"></small>
+        <div class="audio-track-info">
+            <div class="track-title text-truncate" id="playerTrackTitle">No track selected</div>
+            <div class="album-name text-truncate" id="playerAlbumName"></div>
+            <small class="artist-name text-truncate" id="playerArtistName"></small>
         </div>
     </div>
 
@@ -94,8 +94,9 @@
         border-radius: 4px;
     }
 
-    .track-info {
+    .audio-track-info {
         flex: 1;
+        max-width: 200px;
     }
 
     .track-title {
@@ -289,9 +290,10 @@
             track.artistName,
             track.title,
             track.trackTime,
-            'deep',
+            djType,
             function() { audio.volume = 0.3; play();  },
-            function() { audio.volume = 1; }
+            function() { audio.volume = 1; },
+            function() { audio.volume = 1; play();  }
         )
         
         

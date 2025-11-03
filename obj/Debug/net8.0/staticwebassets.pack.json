@@ -5,6 +5,10 @@
       "PackagePath": "staticwebassets/SkyTunesCsharp.bundle.scp.css"
     },
     {
+      "Id": "/home/miltonejones/Projects/SkyTunesCsharp/wwwroot/css/banner.css",
+      "PackagePath": "staticwebassets/css/banner.css"
+    },
+    {
       "Id": "/home/miltonejones/Projects/SkyTunesCsharp/wwwroot/css/carousel.css",
       "PackagePath": "staticwebassets/css/carousel.css"
     },

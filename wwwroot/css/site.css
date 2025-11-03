@@ -37,6 +37,11 @@
     transform: rotate(360deg);
   }
 }
+.nav-link.active {
+  font-weight: 600;
+  color: #007bff !important;
+  background-color: rgba(0, 123, 255, 0.1);
+}
 
 .pl-6 {
   padding-left: 1.5rem;
@@ -46,6 +51,10 @@
   height: 32px;
   margin-right: 0.5rem;
   display: inline;
+}
+
+.cover-art {
+  max-width: 100px;
 }
 
 .workspace {

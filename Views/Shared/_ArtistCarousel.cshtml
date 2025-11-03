@@ -2,7 +2,7 @@
 
 @{
     var validArtists = Model.Artists?.Where(a => !string.IsNullOrEmpty(a.ImageLg)).ToList() ?? new List<DashResponse>();
-    var currentIndex = 0; // In real implementation, you'd manage this state
+    @* var currentIndex = 0; // In real implementation, you'd manage this state *@
     var currentArtist = validArtists.FirstOrDefault();
 }
 

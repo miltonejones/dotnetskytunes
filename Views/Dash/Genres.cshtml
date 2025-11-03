@@ -10,8 +10,7 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4>Genre</h1>
-        <div class="pagination-info">
-
+        <div class="pagination-info"> 
         @if (totalPages > 1)
         {
             <nav aria-label="genre pagination">
@@ -20,9 +19,12 @@
                         <a class="page-link" href="@Url.Action("Grid", "Dash", new { type = "genres", page = currentPage - 1 })">Previous</a>
                     </li> 
                     Page @currentPage of @totalPages
-                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Grid", "Dash", new { type = "genres", page = currentPage + 1 })">Next</a>
-                    </li>
+                    @if (Model.Count > 100)
+                    {
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Grid", "Dash", new { type = "genres", page = currentPage + 1 })">Next</a>
+                        </li>
+                    }
                 </ul>
             </nav>
         }

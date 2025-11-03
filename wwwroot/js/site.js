@@ -16,7 +16,8 @@ async function announceChange(
   ms,
   chatType,
   onSpeechStart = null,
-  onSpeechEnd = null
+  onSpeechEnd = null,
+  onSpeechError = null
 ) {
   if (ms < 150000) {
     return onSpeechEnd();
@@ -28,6 +29,9 @@ async function announceChange(
       title,
     }),
   };
+
+  // showToast("Getting track info...", "Hang on");
+
   const response = await fetch(
     "https://ismvqzlyrf.execute-api.us-east-1.amazonaws.com/" + chatType,
     requestOptions
@@ -36,13 +40,11 @@ async function announceChange(
   const json = await response.json();
 
   if (!json.messageContent) {
-    return onSpeechEnd();
+    return onSpeechError();
   }
 
   // Parse introduction from first message in choices.
   const { messageContent } = json;
-
-  console.log({ json });
 
   const utterance = new SpeechSynthesisUtterance(messageContent);
   // Set up event listeners for speech start and end
@@ -70,6 +72,12 @@ async function announceChange(
   window.speechSynthesis.speak(utterance);
 
   return true;
+}
+
+function playAllTracks() {
+  if (trackList.length > 0 && window.playGlobalTrack) {
+    window.playGlobalTrack(trackList[0], trackList, 0);
+  }
 }
 
 function doFallback(picture, src, fallback) {

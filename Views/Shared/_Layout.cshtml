@@ -1,4 +1,28 @@
-﻿<!DOCTYPE html>
+﻿@{
+    string IsActive(string controller, string action = "", string type = "")
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+        var currentType = Context.Request.Query["type"].ToString();
+
+        if (controller == "Library" && currentController == "Library")
+            return "text-dark active";
+        
+        if (controller == currentController)
+        {
+            if (controller == "Dash" && type == currentType)
+                return "text-dark active";
+            if (controller == "Home")
+                return "text-dark active";
+            @* return "text-dark active"; *@
+        }
+        
+        return "";
+    }
+}
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,6 +32,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/drawer.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/carousel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/banner.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SkyTunesCsharp.styles.css" asp-append-version="true" />
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -24,22 +49,25 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">🏠 Home</a>
+                            <a class="nav-link @IsActive("Home", "Index")" asp-area="" asp-controller="Home" asp-action="Index">🏠 Home</a>
                         </li>
-                       <li class="nav-item">
-                            <a class="nav-link text-dark link" onclick="gotoPage('/Library')">📚 Library</a> 
+                       @* <li class="nav-item">
+                            <a class="nav-link link @IsActive("Library")" onclick="gotoPage('/Library')">📚 Library [@IsActive("Library")]</a> 
+                        </li> *@
+                        <li class="nav-item">
+                            <a class="nav-link @IsActive("Detail", action: "Library")" href="@Url.Action("Library", "Detail")">📚 Library</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Grid", "Dash", new { type = "artists" })">🤺 Artists</a>
+                            <a class="nav-link @IsActive("Dash", "Grid", "artists")" href="@Url.Action("Grid", "Dash", new { type = "artists" })">🤺 Artists</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Grid", "Dash", new { type = "albums" })">📀 Albums</a>
+                            <a class="nav-link @IsActive("Dash", "Grid", "albums")" href="@Url.Action("Grid", "Dash", new { type = "albums" })">📀 Albums</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Grid", "Dash", new { type = "genres" })">🏷 Genres</a>
+                            <a class="nav-link @IsActive("Dash", "Grid", "genres")" href="@Url.Action("Grid", "Dash", new { type = "genres" })">🏷 Genres</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Grid", "Dash", new { type = "playlists" })">📜 Playlists</a>
+                            <a class="nav-link @IsActive("Dash", "Grid", "playlists")" href="@Url.Action("Grid", "Dash", new { type = "playlists" })">📜 Playlists</a>
                         </li>
                     </ul>
                     
@@ -51,6 +79,25 @@
                                placeholder="🎵 Search..." 
                                aria-label="Search">
                     </div>
+
+                    <!-- Compact Settings Dropdown -->
+<div class="dropdown">
+    <button class="btn btn-link text-dark dropdown-toggle" 
+            type="button" 
+            id="settingsDropdown" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false"
+            style="border: none; text-decoration: none;">
+        <i class="fas fa-cog fa-lg"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
+        <li><a class="dropdown-item">AI Disc Jockey</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item dj" data-dj="deep" href="javascript:void(0)"><i class="fas fa-volume-up me-2"></i>Deepseek</a></li>
+        <li><a class="dropdown-item dj" data-dj="announce" href="javascript:void(0)"><i class="fas fa-palette me-2"></i>ChatGPT</a></li> 
+    </ul>
+</div> 
+
                 </div>
             </div>
         </nav>
@@ -79,9 +126,34 @@
     <script src="~/js/playlist.js" asp-append-version="true"></script>
     
     <script>
+
+        let djType = "deep";
         function gotoPage(url) { 
             window.location.href = url;
         }
+
+        function setDj(type) { 
+            djType = type;
+            setLLM ();
+        }
+
+
+        function setLLM () { 
+            document.querySelectorAll(".dj").forEach((item) => { 
+                var dj = item.getAttribute("data-dj"); 
+                item.classList.remove("active")  ;
+                if (dj === djType) {
+                    item.classList.add("active");
+                }  
+
+                item.addEventListener('click', function(e) {
+                   setDj(dj)
+                });
+                
+            });
+        }
+        
+        document.addEventListener("DOMContentLoaded", setLLM);
 
         // Search functionality with debounce
         (function() {

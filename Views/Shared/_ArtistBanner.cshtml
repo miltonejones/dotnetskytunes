@@ -1,0 +1,19 @@
+@model ArtistBannerViewModel
+
+<div class="artist-outer">
+    <img src="@Model.ImageUrl" alt="@Model.LabelName" onerror="this.src='@Model.FallbackImage'" />
+    
+    <div class="info-box">
+        <div class="info-label">@Model.LabelName</div>
+        <div class="info-title">@Model.TitleName</div>
+        <div class="info-caption mb-2">@Model.Caption</div>
+        
+        @if (Model.Clickable)
+        {
+            <div  class="rounded-b-sm button-style" onclick="playAllTracks()">
+                <i class="fas fa-play"></i> Play All
+            </div>
+        }
+    </div>
+</div>
+ 

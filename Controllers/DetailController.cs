@@ -9,10 +9,18 @@ namespace SkyTunesCsharp.Controllers
         private readonly IDashService _dashService;
         private readonly ILogger<DetailController> _logger;
 
-        public DetailController(IDashService dashService, ILogger<DetailController> logger)
+        private readonly string _logo;
+        private readonly string _coverart;
+
+
+        public DetailController(IDashService dashService, ILogger<DetailController> logger, IConfiguration configuration)
         {
             _dashService = dashService;
             _logger = logger;
+
+            
+            _logo = configuration.GetValue<string>("AppStrings:Logo") ?? string.Empty;
+            _coverart = configuration.GetValue<string>("AppStrings:CoverArt") ?? string.Empty;
         }
 
         [HttpGet]
@@ -52,9 +60,44 @@ namespace SkyTunesCsharp.Controllers
                 viewModel.Subtitle = $"{musicDetail.Count} tracks";
                 viewModel.Tracks = ConvertToTrackDtos(musicDetail.Records, favoriteFileKeys);
 
+
+                ViewBag.Logo = _logo;
+                ViewBag.CoverArt = _coverart;
+                
+
+                viewModel = await DecorateViewModel(viewModel, "All tracks");
                 return View("Index", viewModel);
         }
 
+        private async Task<DetailViewModel> DecorateViewModel(DetailViewModel viewModel, string type)
+        {
+            // Only create banner for certain types where it makes sense
+           var firstTrackWithArtist = viewModel.Tracks.FirstOrDefault(a => a.ArtistFk > 0);
+            if (firstTrackWithArtist != null)
+            {
+                _logger.LogInformation($"First ArtistFk: {firstTrackWithArtist.ArtistFk}");
+                var bannerDetail = await _dashService.GetArtistDetail(firstTrackWithArtist.ArtistFk);
+
+                if (bannerDetail?.Row?.FirstOrDefault() != null)
+                {
+                    var bannerArtist = bannerDetail.Row.First();
+                    if (!string.IsNullOrEmpty(bannerArtist.ImageLg))
+                    {
+                        viewModel.BannerModel = new ArtistBannerViewModel
+                        {
+                            ArtistId = firstTrackWithArtist.ArtistFk,
+                            ImageUrl = bannerArtist.ImageLg,
+                            LabelName = type,
+                            TitleName = viewModel.Title,
+                            Caption = viewModel.Subtitle,
+                            Clickable = true
+                        };
+                    }
+                }
+            }
+            
+            return viewModel;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index(string type, string id, int page = 1)  
@@ -77,6 +120,9 @@ namespace SkyTunesCsharp.Controllers
                     }
                 }
 
+                ViewBag.Logo = _logo;
+                ViewBag.CoverArt = _coverart;
+
                 var listItems = await _dashService.GetPlaylistGrid();
                 var viewModel = new DetailViewModel
                 {
@@ -84,7 +130,7 @@ namespace SkyTunesCsharp.Controllers
                     PlayListItems = listItems.Records,
                     ListKey = ""
                 };
-                var favoriteFileKeys = await _dashService.GetAllRelatedStringsFromPlaylists();
+                var favoriteFileKeys = await _dashService.GetAllRelatedStringsFromPlaylists(); 
 
 
                 switch (type.ToLower())
@@ -99,7 +145,7 @@ namespace SkyTunesCsharp.Controllers
                                 viewModel.Title = artist.Name ?? "Unknown Artist";
                                 viewModel.ImageUrl = artist.ImageLg ?? artist.Thumbnail;
                                 viewModel.Subtitle = $"{artist.TrackCount} tracks";
-                                viewModel.Tracks = ConvertToTrackDtos(artistDetail.Related?.Records, favoriteFileKeys);
+                                viewModel.Tracks = ConvertToTrackDtos(artistDetail.Related?.Records, favoriteFileKeys); 
                             }
                         }
                         break;
@@ -111,10 +157,11 @@ namespace SkyTunesCsharp.Controllers
                             if (albumDetail?.Row?.FirstOrDefault() != null)
                             {
                                 var sortedTracks = albumDetail.Related?.Records
-                                      .GroupBy(t => new { 
-                                        DiscNumber = t.DiscNumber ?? 1, 
-                                        TrackNumber = t.TrackNumber ?? 1
-                                    })
+                                      .GroupBy(t => new
+                                      {
+                                          DiscNumber = t.DiscNumber ?? 1,
+                                          TrackNumber = t.TrackNumber ?? 1
+                                      })
                                     .Select(g => g.First())
                                     .OrderBy(t => t.DiscNumber ?? 1)  // Handle null DiscNumber
                                     .ThenBy(t => t.TrackNumber ?? 1)  // Handle null TrackNumber
@@ -166,6 +213,33 @@ namespace SkyTunesCsharp.Controllers
                 {
                     return NotFound($"{type} with ID {id} not found");
                 }
+
+                viewModel = await DecorateViewModel(viewModel, type);
+
+                // var firstTrackWithArtist = viewModel.Tracks.FirstOrDefault(a => a.ArtistFk > 0);
+                // if (firstTrackWithArtist != null)
+                // {
+                //     _logger.LogInformation($"First ArtistFk: {firstTrackWithArtist.ArtistFk}");
+                //     var bannerDetail = await _dashService.GetArtistDetail(firstTrackWithArtist.ArtistFk);
+
+                //     if (bannerDetail?.Row?.FirstOrDefault() != null)
+                //     {
+                //         var bannerArtist = bannerDetail.Row.First();  
+                //         viewModel.BannerModel = new ArtistBannerViewModel
+                //         {
+                //             ArtistId = firstTrackWithArtist.ArtistFk,
+                //             ImageUrl = bannerArtist.ImageLg,
+                //             LabelName = type,
+                //             TitleName = viewModel.Title,
+                //             Caption = viewModel.Subtitle,
+                //             Clickable = true
+                //         };
+                //     }
+                // }
+                // else
+                // {
+                //     _logger.LogInformation("No tracks with valid ArtistFk found");
+                // }
 
                 return View(viewModel);
             }

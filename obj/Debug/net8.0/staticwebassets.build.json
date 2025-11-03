@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "5v0SGdKcPEITVeHISoCrRkxcc6pfgkMSpoOXzQiPt+8=",
+  "Hash": "gqf/nQsMZXXGzOLqYaYVEr23JQyJPAx8bp16kAQS8Ys=",
   "Source": "SkyTunesCsharp",
   "BasePath": "_content/SkyTunesCsharp",
   "Mode": "Default",
@@ -53,6 +53,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "/home/miltonejones/Projects/SkyTunesCsharp/obj/Debug/net8.0/scopedcss/projectbundle/SkyTunesCsharp.bundle.scp.css"
+    },
+    {
+      "Identity": "/home/miltonejones/Projects/SkyTunesCsharp/wwwroot/css/banner.css",
+      "SourceId": "SkyTunesCsharp",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/miltonejones/Projects/SkyTunesCsharp/wwwroot/",
+      "BasePath": "_content/SkyTunesCsharp",
+      "RelativePath": "css/banner.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/css/banner.css"
     },
     {
       "Identity": "/home/miltonejones/Projects/SkyTunesCsharp/wwwroot/css/carousel.css",

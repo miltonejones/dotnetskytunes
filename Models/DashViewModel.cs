@@ -9,5 +9,5 @@ public class DashViewModel
         public List<DashResponse> AlbumItems { get; set; } = new List<DashResponse>();
         public List<PlaylistItem> PlaylistItems { get; set; } = new List<PlaylistItem>();
         
-        public ArtistCarouselViewModel CarouselItems { get; set; }
+        public ArtistCarouselViewModel? CarouselItems { get; set; }
 }

@@ -21,7 +21,7 @@ public class HomeController : Controller
         IDashService dashService, 
         ICompositeViewEngine viewEngine, 
         ILogger<HomeController> logger,
-        IConfiguration configuration)  // Keep IConfiguration
+        IConfiguration configuration)  
     {
         _dashService = dashService;
         _viewEngine = viewEngine;

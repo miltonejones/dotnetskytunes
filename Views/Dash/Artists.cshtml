@@ -4,7 +4,7 @@
     ViewData["Title"] = "Artists";
     var pageQuery = Context.Request.Query["page"].ToString();
     var currentPage = !string.IsNullOrEmpty(pageQuery) ? int.Parse(pageQuery) : 1;
-    var totalPages = Model.Count > 0 ? (int)Math.Ceiling((double)Model.Count / 20) : 1;
+    var totalPages = Model.Count > 0 ? (int)Math.Ceiling((double)Model.Count / 100) : 1;
 }
 
 <div class="container-fluid">

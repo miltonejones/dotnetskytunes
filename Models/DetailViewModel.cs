@@ -13,6 +13,8 @@ namespace SkyTunesCsharp.Models
         public int CurrentPage { get; set; } = 1;
         public int TotalCount { get; set; } = 0;
 
+        public ArtistBannerViewModel? BannerModel { get;set;}
+
         public List<PlaylistItem>? PlayListItems { get; set; } = new List<PlaylistItem>();
     }    
-}
+}   
