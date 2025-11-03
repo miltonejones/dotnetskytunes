@@ -3,10 +3,10 @@
 <div class="artist-outer">
     <img src="@Model.ImageUrl" alt="@Model.LabelName" onerror="this.src='@Model.FallbackImage'" />
     
-    <div class="info-box">
-        <div class="info-label">@Model.LabelName</div>
-        <div class="info-title">@Model.TitleName</div>
-        <div class="info-caption mb-2">@Model.Caption</div>
+    <div class="banner-info-box">
+        <div class="banner-info-label">@Model.LabelName</div>
+        <div class="banner-info-title">@Model.TitleName</div>
+        <div class="banner-info-caption mb-2">@Model.Caption</div>
         
         @if (Model.Clickable)
         {

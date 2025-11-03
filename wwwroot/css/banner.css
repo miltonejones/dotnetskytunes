@@ -21,7 +21,7 @@
   }
 }
 
-.info-box {
+.banner-info-box {
   position: absolute;
   bottom: 60px;
   left: -100px;
@@ -39,7 +39,7 @@
   }
 }
 
-.info-label {
+.banner-info-label {
   margin: 0px;
   font-family: Roboto, Helvetica, Arial, sans-serif;
   font-weight: 500;
@@ -49,7 +49,7 @@
   text-transform: capitalize;
 }
 
-.info-title {
+.banner-info-title {
   margin: 0px;
   font-family: Roboto, Helvetica, Arial, sans-serif;
   font-weight: 400;
@@ -58,7 +58,7 @@
   line-height: 1;
 }
 
-.info-caption {
+.banner-info-caption {
   margin: 0px;
   font-family: Roboto, Helvetica, Arial, sans-serif;
   font-weight: 500;
@@ -84,16 +84,16 @@
     height: 20vh;
   }
 
-  .info-box {
+  .banner-info-box {
     bottom: 30px;
     left: 40px;
   }
 
-  .info-title {
+  .banner-info-title {
     font-size: 2rem;
   }
 
-  .info-caption {
+  .banner-info-caption {
     font-size: 1rem;
   }
 
