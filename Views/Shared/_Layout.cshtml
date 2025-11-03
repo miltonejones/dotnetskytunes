@@ -3,22 +3,39 @@
     {
         var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
         var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
-        var currentType = Context.Request.Query["type"].ToString();
+        var currentType =  Context.Request.RouteValues["type"]?.ToString() ?? Context.Request.Query["type"].ToString();
 
-        if (controller == "Library" && currentController == "Library")
+        if (action == "Library" && action == currentAction && currentController == "Detail" && controller == "Detail")
             return "text-dark active";
+
+            
+        if (currentController ==  "Detail" && type == currentType && (controller == "Detail"||controller == "Dash")) 
+        {
+            return "text-dark active";
+        }
+
+        if (currentAction ==  action && currentController == controller && currentType.IndexOf(type)> -1) 
+        {
+            return "text-dark active";
+        }
+
         
-        if (controller == currentController)
+        @* if (controller == currentController)
         {
             if (controller == "Dash" && type == currentType)
                 return "text-dark active";
             if (controller == "Home")
-                return "text-dark active";
-            @* return "text-dark active"; *@
-        }
+                return "text-dark active"; 
+        } *@
         
         return "";
     }
+
+    
+        var controllerText = ViewContext.RouteData.Values["controller"]?.ToString();
+        var actionText = ViewContext.RouteData.Values["action"]?.ToString();
+        var typeText = Context.Request.Query["type"].ToString();
+        var routeText = Context.Request.RouteValues["type"]?.ToString();
 }
 
 
@@ -37,6 +54,7 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+@* @controllerText/@actionText/@typeText/@routeText *@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -58,16 +76,16 @@
                             <a class="nav-link @IsActive("Detail", action: "Library")" href="@Url.Action("Library", "Detail")">📚 Library</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @IsActive("Dash", "Grid", "artists")" href="@Url.Action("Grid", "Dash", new { type = "artists" })">🤺 Artists</a>
+                            <a class="nav-link @IsActive("Dash", "Grid", "artist")" href="@Url.Action("Grid", "Dash", new { type = "artists" })">🤺 Artists</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @IsActive("Dash", "Grid", "albums")" href="@Url.Action("Grid", "Dash", new { type = "albums" })">📀 Albums</a>
+                            <a class="nav-link @IsActive("Dash", "Grid", "album")" href="@Url.Action("Grid", "Dash", new { type = "albums" })">📀 Albums</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @IsActive("Dash", "Grid", "genres")" href="@Url.Action("Grid", "Dash", new { type = "genres" })">🏷 Genres</a>
+                            <a class="nav-link @IsActive("Dash", "Grid", "genre")" href="@Url.Action("Grid", "Dash", new { type = "genres" })">🏷 Genres</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @IsActive("Dash", "Grid", "playlists")" href="@Url.Action("Grid", "Dash", new { type = "playlists" })">📜 Playlists</a>
+                            <a class="nav-link @IsActive("Dash", "Grid", type: "playlist")" href="@Url.Action("Grid", "Dash", new { type = "playlists" })">📜 Playlists</a>
                         </li>
                     </ul>
                     
