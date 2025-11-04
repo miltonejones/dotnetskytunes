@@ -21,6 +21,7 @@ builder.Services.AddControllersWithViews()
     });
 
 builder.Services.AddHttpClient<IDashService, DashService>();
+builder.Services.AddScoped<ITuneService, TuneService>(); 
 
 var app = builder.Build();
 

@@ -1,0 +1,116 @@
+@model SkyTunesCsharp.Models.TrackItem
+
+<div class="d-flex flex-column flex-lg-row gap-4 p-4">
+    <!-- Form Section -->
+    <div class="col-3">
+        <div class="card shadow border">
+            <div class="card-body">
+                <form id="trackEditForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="ID" value="@Model.SafeID" />
+                    
+                    <div class="mb-3">
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label for="Title" class="form-label">
+                                Title [@Model.SafeID]
+                            </label>
+                            <input type="text" name="Title" 
+                                   class="form-control"
+                                   id="Title" value="@Model.Title" required />
+                        </div>
+
+                        <!-- Disc Number & Track Number -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="discNumber" class="form-label">
+                                    Disc Number
+                                </label>
+                                <input type="text" name="discNumber" 
+                                       class="form-control"
+                                       id="discNumber" value="@Model.SafeDiscNumber" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="trackNumber" class="form-label">
+                                    Track Number
+                                </label>
+                                <input type="text" name="trackNumber" 
+                                       class="form-control"
+                                       id="trackNumber" value="@Model.SafeTrackNumber" />
+                            </div>
+                        </div>
+
+                        <!-- Artist Name -->
+                        <div class="mb-3">
+                            <label for="artistName" class="form-label">
+                                Artist Name
+                            </label>
+                            <input type="text" name="artistName" 
+                                   class="form-control"
+                                   id="artistName" value="@Model.ArtistName" />
+                        </div>
+
+                        <!-- Album Name -->
+                        <div class="mb-3">
+                            <label for="albumName" class="form-label">
+                                Album Name
+                            </label>
+                            <input type="text" name="albumName" 
+                                   class="form-control"
+                                   id="albumName" value="@Model.AlbumName" />
+                        </div>
+
+                        <!-- Genre -->
+                        <div class="mb-3">
+                            <label for="Genre" class="form-label">
+                                Genre
+                            </label>
+                            <input type="text" name="Genre" 
+                                   class="form-control"
+                                   id="Genre" value="@Model.Genre" />
+                        </div>
+
+                        <!-- Form Status Message -->
+                        <div id="formMessage" class="alert d-none" role="alert"></div>
+
+                        <!-- Buttons -->
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <button type="button" onclick="closeTrackEdit()" 
+                                        class="btn btn-danger w-100">
+                                    Cancel
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="button" id="searchButton" onclick="performAppleLookup()"
+                                        class="btn btn-success w-100 position-relative">
+                                    <div id="searchLoading" class="d-none position-absolute top-50 start-50 translate-middle">
+                                        <div class="spinner-border spinner-border-sm" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <span class="ms-2">Searching...</span>
+                                    </div>
+                                    <span id="searchText">Apple Lookup</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="col-9">
+        <div id="searchResults" class="row g-3">
+            <!-- Results will be populated here via AJAX -->
+        </div>
+
+        <div id="emptyState" class="text-center py-5">
+            <div class="text-muted display-6 mb-3">🎵</div>
+            <h3 class="h5 text-muted mb-2">No results yet</h3>
+            <p class="text-muted">Enter a title and click "Apple Lookup" to search for tracks</p>
+        </div>
+    </div>
+</div>
+ 

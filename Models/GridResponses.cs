@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace SkyTunesCsharp.Models
 {  
@@ -31,11 +32,11 @@ namespace SkyTunesCsharp.Models
         public string SafeKey => GetSafeListKey(Title);
 
 
-        private string GetSafeListKey(string key)
+        private string GetSafeListKey(string name)
         {
-            return key.Replace(" ", "").ToLower();
+            return Regex.Replace(name, @"[\s&-]", "").ToLower();
         }
-
+ 
 
     }
 

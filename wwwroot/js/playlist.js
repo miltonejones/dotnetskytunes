@@ -154,6 +154,10 @@ const handleDragLeave = (e) => {
   e.target.classList.remove("drag-over");
 };
 
+function createKey(name) {
+  return name.replace(/[\s&-]/g, "").toLowerCase();
+}
+
 const handleDrop = (e, dropIndex, listKey) => {
   e.preventDefault();
 
@@ -161,7 +165,7 @@ const handleDrop = (e, dropIndex, listKey) => {
 
   if (draggedItem && draggedItem.index !== dropIndex) {
     getPlaylistGrid().then((data) => {
-      const list = data.records.find((f) => f.listKey === listKey);
+      const list = data.records.find((f) => createKey(f.Title) === listKey);
 
       if (list) {
         console.log({ draggedItem2: draggedItem });

@@ -109,7 +109,7 @@
 
             </div>
 
-            <!-- Tracks List -->
+            <!-- Tracks List --> 
             <div class="tracks-list">
                 @if (Model.Tracks?.Any() == true)
                 {
@@ -122,7 +122,7 @@
                         var track = Model.Tracks[i];
                         string  heart = track.Favorite == true ? "solid" : "regular";
                         // @Html.Raw(Json.Serialize(track))
-                        string draggable = Model.ListKey.Length > 0 ? "true" : "false";
+                        string draggable = Model.SafeKey.Length > 0 ? "true" : "false";
                         
 
                         if (track.DiscNumber > 0 && track.DiscNumber != discNumber && showDiscHeaders) {
@@ -137,7 +137,7 @@
                             ondragstart='handleDragStart(event, @Html.Raw(Json.Serialize(track)), @i)'
                             ondragover="handleDragOver(event, @i)"
                             ondragleave="handleDragLeave(event)"
-                            ondrop="handleDrop(event, @i, '@Model.ListKey')" 
+                            ondrop="handleDrop(event, @i, '@Model.SafeKey')" 
                             data-track-id="@track.Id"
                         >
                         
@@ -182,7 +182,11 @@
                                 <i class="relatable fa-heart" data-file-key="@track.FileKey"></i>
                             </div>
                             <div class="track-actions ms-3" onclick='showMenu(@Html.Raw(Json.Serialize(track)))'> 
-                               <i class="link fa-solid fa-ellipsis-vertical"></i>
+
+                                <button class="btn btn-sm btn-outline-secondary" id="prevBtn">
+                                  <i class="link fa-solid fa-ellipsis-vertical"></i>
+                                </button>
+            
                             </div>
                         </div>
                     }
@@ -245,11 +249,23 @@
     </div>
 </div>
 
+<!-- Offcanvas container -->
+<div class="offcanvas offcanvas-end w-80" tabindex="-1" id="trackEditDrawer">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Edit Track</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <!-- Content loaded via AJAX -->
+    </div>
+</div>
+
+
 @section Scripts {
     <script>
 
         let editedTrack = {}; 
-        const pageListKey = "@Model.ListKey";
+        const pageListKey = "@Model.SafeKey";
         
         function addToQueue(track) { 
             // Add queued property to the track
@@ -291,6 +307,30 @@
             document.getElementById('menuDrawer').classList.remove('show');
         }
 
+        function openTrackEdit(track) {
+            appleTrack = track;
+            // Use the track ID to fetch the partial view
+            fetch(`/Tracks/Edit/${track.id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    const offcanvasBody = document.querySelector('#trackEditDrawer .offcanvas-body');
+                    offcanvasBody.innerHTML = html;
+                    
+                    // Show the offcanvas
+                    const offcanvas = new bootstrap.Offcanvas(document.getElementById('trackEditDrawer'));
+                    offcanvas.show();
+                })
+                .catch(error => {
+                    console.error('Error loading track edit:', error);
+                    showToast('Error loading track editor', 'error');
+                });
+        }
+
         function showMenu(track) {
 
             editedTrack = track;
@@ -317,6 +357,14 @@
             action: () =>
                 gotoPage(`/Detail/genre/${track.genre.replace(/\//g, "*")}`),
             }, 
+
+            {
+            label: "Edit Track",
+            caption: "Modify track details - " + track.id,
+            icon: "✏️",
+            action: () => openTrackEdit(track),
+            },
+
             {
             label: "Add to Queue",
             caption: "Play this song next",
@@ -436,6 +484,8 @@
 }
 
 <style>
+
+
     .detail-image-container img {
         width: 100%;
         max-width: 200px;

@@ -10,6 +10,29 @@
   --mui-focus: #1976d2;
 }
 
+/* Custom offcanvas width */
+.w-80 {
+  width: 80vw !important;
+}
+
+/* Ensure the offcanvas body scrolls properly */
+.offcanvas-body {
+  overflow-y: auto;
+}
+
+/* Make sure the form is responsive within the wide offcanvas */
+@media (max-width: 1200px) {
+  .w-80 {
+    width: 90vw !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .w-80 {
+    width: 100vw !important;
+  }
+}
+
 .track-icon {
   width: 32px;
   height: 32px;
